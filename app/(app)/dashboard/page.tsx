@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { ContentLayout } from '@/components/admin-panel/content-layout';
 
 import { useSidebar } from '@/hooks/use-sidebar';
 import { useStore } from '@/hooks/use-store';
@@ -12,6 +11,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
+import { ContentLayout } from '@/components/app/admin-panel/content-layout';
 
 export default function DashboardPage() {
   const sidebar = useStore(useSidebar, x => x);
