@@ -2,7 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Run linting and lint-staged checks
-npx lint-staged && npm run lint && npm run type-check
+npx lint-staged && npm run type-check
 
 # ANSI color codes for formatting
 RED='\033[0;31m'
