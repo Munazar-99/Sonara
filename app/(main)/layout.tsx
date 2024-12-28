@@ -1,4 +1,4 @@
-import AdminPanelLayout from '@/components/app/admin-panel/admin-panel-layout';
+import AdminPanelLayout from '@/components/main/admin-panel/admin-panel-layout';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export default function DemoLayout({
