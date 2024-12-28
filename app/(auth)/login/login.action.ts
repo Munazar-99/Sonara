@@ -1,6 +1,5 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import prisma from '@/lib/db/prisma';
 import { hashPassword } from '@/lib/auth/util';
@@ -11,7 +10,7 @@ import { createSession, generateSessionToken } from '@/auth';
 
 export async function loginAction(
   formData: z.infer<typeof signInSchema>,
-): Promise<{ error?: string }> {
+): Promise<{ error?: string; success?: boolean }> {
   try {
     // Validate the incoming form data
     const { email, password } = signInSchema.parse(formData);
@@ -44,8 +43,7 @@ export async function loginAction(
     const session = await createSession(token, existingUser.id);
     await setSessionTokenCookie(token, session.expiresAt);
 
-    // Attempt to redirect the user to the dashboard
-    redirect('/dashboard');
+    return { success: true }; // Indicate success
   } catch (error) {
     // Check if the error is a known redirect error
     if (isRedirectError(error)) {

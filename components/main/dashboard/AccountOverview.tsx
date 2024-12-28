@@ -83,7 +83,7 @@ export function AccountOverview() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      className="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
     >
       {metrics.map(metric => (
         <motion.div

@@ -3,9 +3,8 @@
 import { invalidateSession, validateRequest } from '@/auth';
 import { deleteSessionTokenCookie } from '@/lib/auth/session';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { redirect } from 'next/navigation';
 
-export async function logOut(): Promise<{ error: string }> {
+export async function logOut(): Promise<{ error?: string; success?: boolean }> {
   try {
     const { session } = await validateRequest();
     if (!session) {
@@ -14,7 +13,7 @@ export async function logOut(): Promise<{ error: string }> {
 
     await invalidateSession(session.id);
     await deleteSessionTokenCookie();
-    redirect('/login');
+    return { success: true }; // Indicate success
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;

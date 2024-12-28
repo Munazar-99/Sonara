@@ -10,16 +10,16 @@ import { Performance } from './Performance';
 export default function DashboardPage() {
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AccountOverview />
-        <div className="grid gap-4 md:grid-cols-2">
-          <CallVolume />
-          <Performance />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <RecentActivity />
-          <UpcomingAppointments />
-        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CallVolume />
+        <Performance />
+      </div>
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <RecentActivity />
+        <UpcomingAppointments />
       </div>
     </DashboardLayout>
   );

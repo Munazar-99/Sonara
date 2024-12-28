@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { LayoutGrid, LogOut, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,8 +22,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { logOut } from '@/app/(auth)/_logout/logout.action';
+import { handleToastNotification } from '@/components/auth/LoginForm';
 
 export function UserNav() {
+  const router = useRouter();
+
+  const handleLogOut = async () => {
+    const response = await logOut();
+    if (response.error) {
+      console.error(response.error);
+    } else {
+      router.push('/login');
+      console.log('Sign-out successful');
+      handleToastNotification('success', 'Sign-out Successful!', '');
+    }
+  };
+
   return (
     <DropdownMenu>
       <TooltipProvider disableHoverableContent>
@@ -71,7 +86,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="hover:cursor-pointer"
-          onClick={() => logOut()}
+          onClick={() => handleLogOut()}
         >
           <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
           Sign out

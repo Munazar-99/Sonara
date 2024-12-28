@@ -20,8 +20,9 @@ import { toast } from 'sonner';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { PasswordInput } from '../ui/password-input';
 import { signInSchema } from '@/lib/zod/schema';
+import { useRouter } from 'next/navigation';
 
-const handleToastNotification = (
+export const handleToastNotification = (
   type: 'success' | 'error',
   message: string,
   description: string,
@@ -43,6 +44,7 @@ const handleToastNotification = (
   });
 };
 export function LoginForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -60,6 +62,7 @@ export function LoginForm() {
       if (response && response.error) {
         handleToastNotification('error', 'Sign-in Failed', response.error);
       } else {
+        router.push('/dashboard');
         handleToastNotification('success', 'Sign-in Successful!', '');
       }
     } catch (error) {
