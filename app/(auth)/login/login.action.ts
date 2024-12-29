@@ -7,11 +7,26 @@ import { setSessionTokenCookie } from '@/lib/auth/session';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { signInSchema } from '@/lib/zod/schema';
 import { createSession, generateSessionToken } from '@/auth';
+import { Ratelimit } from '@upstash/ratelimit';
+import { redis } from '@/lib/db/upstash';
+import { headers } from 'next/headers';
+
+// implement upstash rate limiting
+const rateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, '60s'),
+});
 
 export async function loginAction(
   formData: z.infer<typeof signInSchema>,
 ): Promise<{ error?: string; success?: boolean }> {
   try {
+    const ip = (await headers()).get('x-forwarded-for');
+    const { success: MaxLimitReached } = await rateLimit.limit(ip!);
+    if (!MaxLimitReached) {
+      return { error: 'Too many requests. Please wait 2 minutes.' };
+    }
+
     // Validate the incoming form data
     const { email, password } = signInSchema.parse(formData);
 
