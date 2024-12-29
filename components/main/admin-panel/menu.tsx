@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Ellipsis, LogOut } from 'lucide-react';
+import { Ellipsis, LogOut, Loader2 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { getMenuList } from '@/lib/menu-list';
@@ -26,15 +27,22 @@ export function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleLogOut = async () => {
-    const response = await logOut();
-    if (response.error) {
-      console.error(response.error);
-    } else {
-      router.push('/login');
-      console.log('Sign-out successful');
-      handleToastNotification('success', 'Sign-out Successful!', '');
+    setLoading(true);
+    try {
+      const response = await logOut();
+      if (response.error) {
+        console.error(response.error);
+      } else {
+        router.push('/login');
+        handleToastNotification('success', 'Sign-out Successful!', '');
+      }
+    } catch (error) {
+      console.error('Error during sign-out:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,20 +140,23 @@ export function Menu({ isOpen }: MenuProps) {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => handleLogOut()}
+                    onClick={handleLogOut}
                     variant="outline"
                     className="mt-5 h-10 w-full justify-center"
+                    disabled={loading}
                   >
-                    <span className={cn(isOpen === false ? '' : 'mr-4')}>
+                    {loading ? (
+                      <Loader2 className="animate-spin" size={18} />
+                    ) : (
                       <LogOut size={18} />
-                    </span>
+                    )}
                     <p
                       className={cn(
                         'whitespace-nowrap',
                         isOpen === false ? 'hidden opacity-0' : 'opacity-100',
                       )}
                     >
-                      Sign out
+                      {loading ? 'Signing out...' : 'Sign out'}
                     </p>
                   </Button>
                 </TooltipTrigger>

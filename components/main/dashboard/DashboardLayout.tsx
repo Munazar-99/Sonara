@@ -9,7 +9,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-900">
       <motion.main
-        className="mx-auto w-[95%] space-y-8 px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
+        className="space-y-8 px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
