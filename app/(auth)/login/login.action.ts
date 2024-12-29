@@ -14,7 +14,7 @@ import { headers } from 'next/headers';
 // implement upstash rate limiting
 const rateLimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, '60s'),
+  limiter: Ratelimit.slidingWindow(5, '120s'),
 });
 
 export async function loginAction(
