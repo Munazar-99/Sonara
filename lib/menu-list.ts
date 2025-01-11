@@ -1,11 +1,11 @@
 import {
-  Tag,
   Users,
   Settings,
-  Bookmark,
   LayoutGrid,
   LucideIcon,
   Calendar,
+  PhoneCall,
+  Clock,
 } from 'lucide-react';
 
 type Submenu = {
@@ -44,29 +44,19 @@ export function getMenuList(): Group[] {
       groupLabel: 'Contents',
       menus: [
         {
-          href: '',
-          label: 'Calender',
+          href: '/availability',
+          label: 'Availability',
+          icon: Clock,
+        },
+        {
+          href: '/bookings',
+          label: 'Bookings',
           icon: Calendar,
-          submenus: [
-            {
-              href: '/availability',
-              label: 'Availability',
-            },
-            {
-              href: '/bookings',
-              label: 'Bookings',
-            },
-          ],
         },
         {
-          href: '/categories',
-          label: 'Categories',
-          icon: Bookmark,
-        },
-        {
-          href: '/tags',
-          label: 'Tags',
-          icon: Tag,
+          href: '/calls',
+          label: 'Call Logs',
+          icon: PhoneCall,
         },
       ],
     },
@@ -79,7 +69,7 @@ export function getMenuList(): Group[] {
           icon: Users,
         },
         {
-          href: '/account',
+          href: '/settings',
           label: 'Account',
           icon: Settings,
         },
