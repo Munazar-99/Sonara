@@ -16,16 +16,18 @@ datasource db {
 }
 
 model User {
-  id           String    @id
-  email        String    @unique
-  firstName    String
-  lastName     String
-  passwordHash String?
-  sessions     Session[]
-  createdAt    DateTime  @default(now())
+  id                   String   @id
+  email                String   @unique
+  firstName            String
+  lastName             String
+  passwordHash         String?
+  sessions             Session[]
+  passwordResetSessions PasswordResetSession[]
+  createdAt            DateTime @default(now())
 
   @@map("users")
 }
+
 
 model Session {
   id        String   @id
@@ -38,14 +40,26 @@ model Session {
 }
 
 model Job {
-  id                String   @id @default(cuid())
-  workOrderNumber   String   @unique
-  type              String
-  size              String
-  numberOfPallets   Int
-  lineNumber        String
-  scheduledDate     DateTime
-  status            String
-  progress          Int
-  instructions      String[]
+  id              String   @id @default(cuid())
+  workOrderNumber String   @unique
+  type            String
+  size            String
+  numberOfPallets Int
+  lineNumber      String
+  scheduledDate   DateTime
+  status          String
+  progress        Int
+  instructions    String[]
 }
+
+model PasswordResetSession {
+  id        String   @id @default(uuid())
+  userId    String
+  email     String
+  expiresAt DateTime
+  
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("password_reset_session")
+}
+

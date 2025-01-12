@@ -39,6 +39,7 @@ export const handleToastNotification = (
   };
 
   toast(message, {
+    position: 'top-center',
     ...config[type],
     description,
   });
@@ -120,6 +121,7 @@ export function LoginForm() {
                 <div className="flex items-center justify-between">
                   <RequiredFormLabel>Password</RequiredFormLabel>
                   <Link
+                    prefetch={true}
                     href="/forgot-password"
                     className="text-sm underline-offset-4 hover:underline"
                   >

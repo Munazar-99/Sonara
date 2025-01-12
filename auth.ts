@@ -1,12 +1,16 @@
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
-} from "@oslojs/encoding";
-import { sha256 } from "@oslojs/crypto/sha2";
+} from '@oslojs/encoding';
+import { sha256 } from '@oslojs/crypto/sha2';
 
-import prisma from "./lib/db/prisma";
-import { Session, User } from "@prisma/client";
-import { getSessionToken } from "./lib/auth/session";
+import prisma from './lib/db/prisma';
+import { PasswordResetSession, Session, User } from '@prisma/client';
+import { getSessionToken } from './lib/auth/session';
+import { Resend } from 'resend';
+import RaycastMagicLinkEmail from './components/email/Reset';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
@@ -28,6 +32,25 @@ export async function createSession(
   await prisma.session.create({
     data: session,
   });
+  return session;
+}
+export async function createPasswordResetSession(
+  token: string,
+  userId: string,
+  email: string,
+): Promise<PasswordResetSession> {
+  const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 10);
+
+  const session = await prisma.passwordResetSession.create({
+    data: {
+      id: sessionId,
+      userId,
+      email,
+      expiresAt,
+    },
+  });
+
   return session;
 }
 
@@ -79,4 +102,38 @@ export async function validateRequest(): Promise<SessionValidationResult> {
     return { session: null, user: null };
   }
   return validateSessionToken(sessionToken);
+}
+
+export const sendEmail = async (email: string, token: string) => {
+  const { error } = await resend.emails.send({
+    from: 'support@munazar-ali.dev',
+    to: [email],
+    subject: 'Reset Password',
+    react: RaycastMagicLinkEmail({
+      magicLink: `http://localhost:3000/change-password/${token}`,
+    }),
+  });
+
+  if (error) {
+    console.error({ error });
+    return {
+      success: false,
+      message: `Failed to send email: ${error.message}`,
+    };
+  }
+
+  return {
+    success: true,
+    message: `An email has been sent to ${email}.`,
+  };
+};
+
+export async function invalidateUserPasswordResetSessions(
+  userId: string,
+): Promise<void> {
+  await prisma.passwordResetSession.deleteMany({
+    where: {
+      userId: userId,
+    },
+  });
 }

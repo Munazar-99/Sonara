@@ -33,7 +33,6 @@ export function UserNav() {
       console.error(response.error);
     } else {
       router.push('/login');
-      console.log('Sign-out successful');
       handleToastNotification('success', 'Sign-out Successful!', '');
     }
   };
