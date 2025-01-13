@@ -21,8 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { logOut } from '@/app/(auth)/_logout/logout.action';
-import { handleToastNotification } from '@/components/auth/LoginForm';
+import { logOut } from '@/features/auth/logout/server/actions/logout.action';
+import { handleToastNotification } from '@/components/toast/HandleToast';
 
 export function UserNav() {
   const router = useRouter();

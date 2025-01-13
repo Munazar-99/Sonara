@@ -1,10 +1,5 @@
+import { LoginForm } from '@/features/auth/login/components/LoginForm';
 import { GalleryVerticalEnd } from 'lucide-react';
-
-import { LoginForm } from '@/components/auth/LoginForm';
-
-// export const config = {
-//   runtime: 'edge',
-// };
 
 export default async function LoginPage() {
   return (

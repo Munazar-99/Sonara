@@ -5,8 +5,8 @@ import { Ellipsis, LogOut, Loader2 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { cn } from '@/lib/utils';
-import { getMenuList } from '@/lib/menu-list';
+import { cn } from '@/utils/utils';
+import { getMenuList } from '@/utils/constants/sidebar/menu-list';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -16,8 +16,8 @@ import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import { CollapseMenuButton } from './collapse-menu-button';
-import { logOut } from '@/app/(auth)/_logout/logout.action';
-import { handleToastNotification } from '@/components/auth/LoginForm';
+import { logOut } from '@/features/auth/logout/server/actions/logout.action';
+import { handleToastNotification } from '@/components/toast/HandleToast';
 
 interface MenuProps {
   isOpen: boolean | undefined;

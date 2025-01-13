@@ -2,7 +2,7 @@
 
 import { useSidebar } from '@/hooks/use-sidebar';
 import { useStore } from '@/hooks/use-store';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { Sidebar } from './sidebar';
 import { Footer } from './footer';
 
