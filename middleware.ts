@@ -2,11 +2,15 @@ import { NextResponse } from 'next/server';
 
 import type { NextRequest } from 'next/server';
 
+export const config = { matcher: ['/dashboard'] };
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (request.method === 'GET') {
     const response = NextResponse.next();
-    const token = request.cookies.get('session')?.value ?? null;
-    if (token !== null) {
+    const token = request.cookies.get('auth_session')?.value ?? null;
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    } else if (token !== null) {
       // Only extend cookie expiration on GET requests since we can be sure
       // a new session wasn't set when handling the request.
       response.cookies.set('session', token, {
