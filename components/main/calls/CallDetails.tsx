@@ -16,9 +16,9 @@ interface CallDetailsProps {
     id: string;
     callerId: string;
     direction: 'inbound' | 'outbound';
-    dateTime: string;
-    duration: string;
-    sentiment?: 'positive' | 'neutral' | 'negative';
+    dateTime: number;
+    duration: number | undefined;
+    sentiment?: string;
   };
 }
 

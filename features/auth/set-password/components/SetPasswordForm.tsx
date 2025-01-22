@@ -46,7 +46,6 @@ const ChangePassword = ({ token }: { token: string }) => {
     try {
       // Call the reset-password function
       const response = await setPasswordAction(token, data);
-      console.log({ response });
 
       // Handle reset-password response
       if (response && response.error) {

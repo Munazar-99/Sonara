@@ -1,10 +1,8 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -13,7 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Filter } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  PhoneIncoming,
+  PhoneOutgoing,
+  Clock,
+  DollarSign,
+  SmilePlus,
+  Frown,
+  Meh,
+} from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -28,79 +36,223 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import {
-  format,
-  parseISO,
-  subDays,
-  isWithinInterval,
-  startOfToday,
-} from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { format, subDays, endOfToday, startOfToday } from 'date-fns';
+import { useQuery } from '@tanstack/react-query';
 import { CallDetails } from './CallDetails';
+import { Skeleton } from '@/components/ui/skeleton';
+import { fetchCallsAction } from '@/features/calls/server/fetch-calls.action';
 
-interface Call {
+export interface Call {
   id: string;
-  dateTime: string;
+  dateTime: number;
   direction: 'inbound' | 'outbound';
   callerId: string;
-  duration: string;
+  duration: number | undefined;
+  recordingUrl: string;
+  cost: number;
+  sentiment: string;
 }
 
-const calls: Call[] = [
-  {
-    id: '1',
-    dateTime: '2024-12-30T11:16:00',
-    direction: 'inbound',
-    callerId: '+353 (852) 418-982',
-    duration: '02:49',
+const dateRanges: Record<
+  string,
+  { label: string; days: number; lowerThreshold: number }
+> = {
+  today: { label: 'Today', days: 0, lowerThreshold: startOfToday().getTime() },
+  week: {
+    label: 'This Week',
+    days: 7,
+    lowerThreshold: subDays(endOfToday(), 7).getTime(),
   },
-  {
-    id: '2',
-    dateTime: '2024-12-30T11:13:00',
-    direction: 'outbound',
-    callerId: '+353 (852) 418-982',
-    duration: '-',
+  month: {
+    label: 'Last 30 Days',
+    days: 30,
+    lowerThreshold: subDays(endOfToday(), 30).getTime(),
   },
-  {
-    id: '3',
-    dateTime: '2024-12-26T16:49:00',
-    direction: 'outbound',
-    callerId: '+353 (852) 418-982',
-    duration: '-',
+  quarter: {
+    label: 'Last 90 Days',
+    days: 90,
+    lowerThreshold: subDays(endOfToday(), 90).getTime(),
   },
-];
-
-const dateRanges = {
-  today: { label: 'Today', days: 0 },
-  week: { label: 'This Week', days: 7 },
-  month: { label: 'Last 30 Days', days: 30 },
-  quarter: { label: 'Last 90 Days', days: 90 },
 };
 
-export function CallLogTable() {
+export function CallLogTable({ initialCalls }: { initialCalls: Call[] }) {
+  const [paginationKeys, setPaginationKeys] = useState<string[]>([]);
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [dateRange, setDateRange] = useState('month');
+  const [filterType, setFilterType] = useState<'inbound' | 'outbound' | 'all'>(
+    'all',
+  );
+  const [dateRange, setDateRange] = useState<keyof typeof dateRanges>('month');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filteredCalls = calls.filter(call => {
-    const matchesSearch = call.callerId
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || call.direction === filterType;
+  const currentPaginationKey = paginationKeys[paginationKeys.length - 1];
 
-    const callDate = parseISO(call.dateTime);
-    const today = startOfToday();
-    const rangeStart = subDays(
-      today,
-      dateRanges[dateRange as keyof typeof dateRanges].days,
-    );
-    const matchesDate = isWithinInterval(callDate, {
-      start: rangeStart,
-      end: today,
+  const fetchCallsCallback = useCallback(() => {
+    return fetchCallsAction({
+      limit: rowsPerPage,
+      paginationKey: currentPaginationKey,
+      lowerThreshold: dateRanges[dateRange].lowerThreshold,
+      direction:
+        filterType === 'all'
+          ? undefined
+          : (filterType as 'inbound' | 'outbound'),
+      searchQuery,
     });
+  }, [rowsPerPage, currentPaginationKey, dateRange, filterType, searchQuery]);
 
-    return matchesSearch && matchesType && matchesDate;
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: [
+      'calls',
+      {
+        paginationKey: currentPaginationKey,
+        limit: rowsPerPage,
+        dateRange,
+        filterType,
+        searchQuery,
+      },
+    ],
+    queryFn: fetchCallsCallback,
+    initialData: initialCalls,
+    refetchOnMount: false,
   });
+
+  const calls = Array.isArray(data) ? data : [];
+
+  useEffect(() => {
+    // Reset pagination when filters change
+    setPaginationKeys([]);
+  }, [searchQuery, filterType, dateRange, rowsPerPage]);
+
+  const formatDuration = (duration: number | undefined) => {
+    if (duration === undefined) return 'Missed';
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleNextPage = () => {
+    if (calls.length === rowsPerPage) {
+      const lastCall = calls[calls.length - 1];
+      setPaginationKeys(prev => [...prev, lastCall.id]);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    setPaginationKeys(prev => prev.slice(0, -1));
+  };
+
+  const renderTableContent = () => {
+    if (isLoading || isFetching) {
+      return Array.from({ length: rowsPerPage }).map((_, index) => (
+        <TableRow
+          key={`skeleton-${index}`}
+          className='dark:hover:bg-zinc-700/50" cursor-pointer transition-colors'
+        >
+          <TableCell className={`px-4 py-4`}>
+            <div className="flex items-center justify-start space-x-2">
+              <Skeleton className="h-6 w-6" />
+              <Skeleton className="h-4 w-[145px]" />
+            </div>
+          </TableCell>
+          <TableCell className={`px-4 py-4`}>
+            <div className="flex flex-col space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          </TableCell>
+          <TableCell className={`px-4 py-4`}>
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          </TableCell>
+          <TableCell className={`px-4 py-4`}>
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          </TableCell>
+          <TableCell className={`px-4 py-4`}>
+            <Skeleton className="h-6 w-24" />
+          </TableCell>
+        </TableRow>
+      ));
+    }
+
+    if (calls.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={5} className="h-32 text-center">
+            <div className="flex flex-col items-center justify-center space-y-2 text-muted-foreground">
+              <Search className="h-8 w-8" />
+              <p className="text-sm">No calls found</p>
+              {searchQuery || filterType !== 'all' || dateRange !== 'month' ? (
+                <p className="text-xs">
+                  Try adjusting your filters or search query
+                </p>
+              ) : (
+                <p className="text-xs">No call history available</p>
+              )}
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return calls.map(call => (
+      <TableRow
+        key={call.id}
+        className="cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
+        onClick={() => setSelectedCall(call)}
+      >
+        <TableCell className="px-4 py-4">
+          <div className="flex items-center justify-start space-x-2">
+            <div className="flex items-center justify-center">
+              {call.direction === 'inbound' ? (
+                <PhoneIncoming className="h-5 w-5 text-green-500" />
+              ) : (
+                <PhoneOutgoing className="h-5 w-5 text-blue-500" />
+              )}
+            </div>
+            <span className="text-center">{call.callerId}</span>
+          </div>
+        </TableCell>
+        <TableCell className="px-4 py-4 font-medium">
+          <div className="flex flex-col">
+            <span>{format(new Date(call.dateTime), 'MMM d, yyyy')}</span>
+            <span className="text-sm text-muted-foreground">
+              {format(new Date(call.dateTime), 'h:mm a')}
+            </span>
+          </div>
+        </TableCell>
+        <TableCell className="px-4 py-4">
+          <div className="flex items-center space-x-1">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">{formatDuration(call.duration)}</span>
+          </div>
+        </TableCell>
+        <TableCell className="px-4 py-4">
+          <div className="flex items-center space-x-1">
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">{call.cost.toFixed(2)}</span>
+          </div>
+        </TableCell>
+        <TableCell className="px-4 py-4">
+          <div className="flex items-center space-x-1">
+            {call.sentiment === 'Positive' ? (
+              <SmilePlus className="h-5 w-5 text-green-500" />
+            ) : call.sentiment === 'Neutral' ? (
+              <Meh className="h-5 w-5 text-yellow-500" />
+            ) : (
+              <Frown className="h-5 w-5 text-red-500" />
+            )}
+            <span className="text-sm capitalize">{call.sentiment}</span>
+          </div>
+        </TableCell>
+      </TableRow>
+    ));
+  };
 
   return (
     <motion.div
@@ -134,7 +286,12 @@ export function CallLogTable() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={filterType} onValueChange={setFilterType}>
+          <Select
+            value={filterType}
+            onValueChange={(value: string) =>
+              setFilterType(value as 'inbound' | 'outbound' | 'all')
+            }
+          >
             <SelectTrigger className="w-full sm:w-[140px]">
               <Filter className="mr-2 h-4 w-4" />
               <SelectValue placeholder="All Types" />
@@ -151,42 +308,70 @@ export function CallLogTable() {
       <Card className="overflow-hidden bg-white dark:bg-zinc-800/50">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[200px]">Date & Time</TableHead>
-                <TableHead className="w-[120px]">Direction</TableHead>
-                <TableHead className="w-[200px]">Caller ID</TableHead>
-                <TableHead className="w-[100px]">Duration</TableHead>
+            <TableHeader className="bg-gray-50 dark:bg-zinc-800">
+              <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-gray-700">
+                <TableHead className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                  Caller ID
+                </TableHead>
+                <TableHead className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                  Date & Time
+                </TableHead>
+                <TableHead className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                  Duration
+                </TableHead>
+                <TableHead className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                  Cost
+                </TableHead>
+                <TableHead className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                  Sentiment
+                </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {filteredCalls.map(call => (
-                <TableRow
-                  key={call.id}
-                  className="cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
-                  onClick={() => setSelectedCall(call)}
-                >
-                  <TableCell className="py-4 font-medium">
-                    {format(parseISO(call.dateTime), 'MMM d, yyyy, h:mm a')}
-                  </TableCell>
-                  <TableCell className="py-4">
-                    <Badge
-                      variant="secondary"
-                      className={
-                        call.direction === 'inbound'
-                          ? 'bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400'
-                          : 'bg-purple-500/10 text-purple-500 dark:bg-purple-500/20 dark:text-purple-400'
-                      }
-                    >
-                      {call.direction}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="py-4">{call.callerId}</TableCell>
-                  <TableCell className="py-4">{call.duration}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+            <TableBody>{renderTableContent()}</TableBody>
           </Table>
+        </div>
+      </Card>
+
+      <Card className="bg-white dark:bg-zinc-800/50">
+        <div className="flex flex-col items-center justify-between p-4 sm:flex-row">
+          <div className="mb-4 flex items-center space-x-2 sm:mb-0">
+            <span className="text-sm text-muted-foreground">
+              Rows per page:
+            </span>
+            <Select
+              value={rowsPerPage.toString()}
+              onValueChange={value => setRowsPerPage(Number(value))}
+            >
+              <SelectTrigger className="w-[70px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handlePreviousPage}
+              disabled={paginationKeys.length === 0 || isLoading || isFetching}
+              className="p-4"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              className="p-4"
+              size="lg"
+              onClick={handleNextPage}
+              disabled={calls.length < rowsPerPage || isLoading || isFetching}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </Card>
 
@@ -196,9 +381,9 @@ export function CallLogTable() {
       >
         <SheetContent side="right" className="w-full p-0 sm:max-w-lg">
           <SheetHeader className="p-4">
-            <SheetTitle>Edit profile</SheetTitle>
+            <SheetTitle>Call Details</SheetTitle>
             <SheetDescription>
-              Make changes to your profile here. Click save when you are done.
+              View detailed information about the selected call.
             </SheetDescription>
           </SheetHeader>
           {selectedCall && <CallDetails call={selectedCall} />}
