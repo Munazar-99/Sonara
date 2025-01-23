@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,13 +19,22 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { CallDetails } from '@/components/main/calls/CallDetails';
 import { useCallData } from '../hooks/useCallData';
 import { Call } from '../types';
 import { dateRanges } from '../utils';
 import { CallTableContent } from './CallTableContent';
 import { CallTableHeader } from './CallTableHeader';
-import { CallTablePagination } from './CallTablePagination';
+
+const CallDetails = lazy(() =>
+  import('@/components/main/calls/CallDetails').then(mod => ({
+    default: mod.default,
+  })),
+);
+const CallTablePagination = lazy(() =>
+  import('./CallTablePagination').then(mod => ({
+    default: mod.default,
+  })),
+);
 
 export default function CallLogTable({
   initialCalls,

@@ -12,7 +12,7 @@ import { Download, Star, Play, Pause, RotateCcw } from 'lucide-react';
 import { useWavesurfer } from '@wavesurfer/react';
 import { Call } from '@/features/calls/types';
 
-export function CallDetails({ call }: { call: Call }) {
+export default function CallDetails({ call }: { call: Call }) {
   const waveformRef = useRef<HTMLDivElement>(null);
 
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
