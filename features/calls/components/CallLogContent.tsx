@@ -1,5 +1,9 @@
+import dynamic from 'next/dynamic';
 import { getInitialCallsAction } from '../server/get-initial-calls.action';
-import { CallLogTable } from './CallLogTable';
+
+const CallLogTable = dynamic(() => import('./CallLogTable'), {
+  loading: () => <div>Loading table...</div>,
+});
 
 export async function CallLogContent() {
   const callResponses = await getInitialCallsAction({ limit: 10 });

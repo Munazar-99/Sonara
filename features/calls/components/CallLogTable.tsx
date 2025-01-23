@@ -27,7 +27,11 @@ import { CallTableContent } from './CallTableContent';
 import { CallTableHeader } from './CallTableHeader';
 import { CallTablePagination } from './CallTablePagination';
 
-export function CallLogTable({ initialCalls }: { initialCalls: Call[] }) {
+export default function CallLogTable({
+  initialCalls,
+}: {
+  initialCalls: Call[];
+}) {
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const {
     calls,

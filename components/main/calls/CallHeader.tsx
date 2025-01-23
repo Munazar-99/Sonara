@@ -1,14 +1,12 @@
+import { memo } from 'react';
+
 interface CallHeaderProps {
   heading: string;
   text?: string;
   children?: React.ReactNode;
 }
 
-export default function CallHeader({
-  heading,
-  text,
-  children,
-}: CallHeaderProps) {
+function CallHeader({ heading, text, children }: CallHeaderProps) {
   return (
     <div className="flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between">
       <div className="animate-in-right grid gap-1">
@@ -23,3 +21,5 @@ export default function CallHeader({
     </div>
   );
 }
+
+export default memo(CallHeader);
