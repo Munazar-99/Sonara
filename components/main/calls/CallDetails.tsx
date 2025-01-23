@@ -10,27 +10,17 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Download, Star, Play, Pause, RotateCcw } from 'lucide-react';
 import { useWavesurfer } from '@wavesurfer/react';
+import { Call } from '@/features/calls/types';
 
-interface CallDetailsProps {
-  call: {
-    id: string;
-    callerId: string;
-    direction: 'inbound' | 'outbound';
-    dateTime: number;
-    duration: number | undefined;
-    sentiment?: string;
-  };
-}
-
-export function CallDetails({ call }: CallDetailsProps) {
+export function CallDetails({ call }: { call: Call }) {
   const waveformRef = useRef<HTMLDivElement>(null);
 
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
     container: waveformRef,
-    url: 'https://www.mfiles.co.uk/mp3-downloads/gs-cd-track2.mp3',
+    url: call.recordingUrl,
     waveColor: '#94a3b8', // slate-400
     progressColor: '#3b82f6', // blue-500
-    height: 60,
+    height: 50,
   });
 
   const togglePlayPause = () => {
