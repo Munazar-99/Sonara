@@ -39,7 +39,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { format, subDays, endOfToday, startOfToday } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
-import CallDetails from './CallDetails';
+import CallDetails from './CallDetails/CallDetails';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchCallsAction } from '@/features/calls/server/fetch-calls.action';
 

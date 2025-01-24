@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 interface CallHeaderProps {
   heading: string;
   text?: string;
@@ -22,4 +20,4 @@ function CallHeader({ heading, text, children }: CallHeaderProps) {
   );
 }
 
-export default memo(CallHeader);
+export default CallHeader;

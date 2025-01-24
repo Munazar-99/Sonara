@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface CallTablePaginationProps {
+export interface CallTablePaginationProps {
   rowsPerPage: number;
   setRowsPerPage: (value: number) => void;
   handlePreviousPage: () => void;

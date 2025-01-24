@@ -10,8 +10,9 @@
     "type-check": "tsc -b",
     "format": "prettier --write .",
     "lint:fix": "next lint --fix",
-    "prepare": "husky install"
-  },
+    "prepare": "husky install",
+    "analyze": "cross-env ANALYZE=true next build"
+    },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@oslojs/crypto": "^1.0.1",
@@ -71,11 +72,13 @@
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.1.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@typescript-eslint/parser": "^8.18.2",
     "commitizen": "^4.3.1",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.2",

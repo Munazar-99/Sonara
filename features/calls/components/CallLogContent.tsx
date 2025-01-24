@@ -1,5 +1,5 @@
 import { getInitialCallsAction } from '../server/get-initial-calls.action';
-import CallLogTable from './CallLogTable';
+import DynamicCallLogTable from './CallLogTable/Wrapper';
 
 export async function CallLogContent() {
   const callResponses = await getInitialCallsAction({ limit: 10 });
@@ -16,5 +16,5 @@ export async function CallLogContent() {
     sentiment: call.call_analysis?.user_sentiment ?? '',
   }));
 
-  return <CallLogTable initialCalls={initialCalls} />;
+  return <DynamicCallLogTable initialCalls={initialCalls} />;
 }
