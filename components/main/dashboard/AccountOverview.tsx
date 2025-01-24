@@ -1,6 +1,5 @@
 import React from 'react';
 import { Phone, ArrowUpRight, Clock, Package } from 'lucide-react';
-import { motion } from 'motion/react';
 
 const metrics = [
   {
@@ -43,52 +42,12 @@ const metrics = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-    },
-  },
-};
-
-const progressVariants = {
-  hidden: { width: 0 },
-  visible: {
-    width: 'var(--progress)',
-    transition: {
-      duration: 0.8,
-      ease: 'easeOut',
-      delay: 0.2,
-    },
-  },
-};
-
 export function AccountOverview() {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
-    >
+    <div className="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {metrics.map(metric => (
-        <motion.div
+        <div
           key={metric.title}
-          variants={itemVariants}
           className="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg dark:bg-zinc-800"
         >
           <div className="mb-2 flex items-start justify-between">
@@ -103,14 +62,9 @@ export function AccountOverview() {
           {metric.isPackage ? (
             <div className="space-y-2">
               <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                <motion.div
+                <div
                   className="h-full rounded-full bg-indigo-500 dark:bg-indigo-400"
-                  variants={progressVariants}
-                  style={
-                    {
-                      '--progress': `${metric.usage.percentage}%`,
-                    } as React.CSSProperties
-                  }
+                  style={{ width: `${metric.usage.percentage}%` }}
                 />
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -130,8 +84,8 @@ export function AccountOverview() {
               {metric.trend}
             </p>
           )}
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 }

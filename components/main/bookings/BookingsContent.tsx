@@ -1,18 +1,12 @@
 'use client';
 
-import { motion } from 'motion/react';
 import React from 'react';
 import { BookingCalendar } from './BookingCalendar';
 import { BookingStats } from './BookingStats';
 
 export default function BookingsContent() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="container mx-auto max-w-7xl px-4 py-8"
-    >
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
           Bookings
@@ -25,6 +19,6 @@ export default function BookingsContent() {
       <div className="mt-8">
         <BookingCalendar />
       </div>
-    </motion.div>
+    </div>
   );
 }

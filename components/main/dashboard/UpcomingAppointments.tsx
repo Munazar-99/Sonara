@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 
 const appointments = [
@@ -33,49 +32,17 @@ const appointments = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-    },
-  },
-};
-
 export function UpcomingAppointments() {
   return (
-    <motion.div
-      className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      variants={containerVariants}
-      transition={{ duration: 0.5, delay: 0.6 }}
-    >
+    <div className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6">
       <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white sm:text-2xl">
         Upcoming Appointments
       </h2>
       <div className="space-y-4">
-        {appointments.map((appointment, index) => (
-          <motion.div
+        {appointments.map(appointment => (
+          <div
             key={appointment.id}
             className="flex items-center rounded-lg bg-gray-50 p-3 dark:bg-zinc-700 sm:p-4"
-            variants={itemVariants}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
           >
             <div className="mr-3 rounded-full bg-indigo-500 p-2 sm:mr-4">
               <Calendar className="h-4 w-4 text-white sm:h-5 sm:w-5" />
@@ -96,9 +63,9 @@ export function UpcomingAppointments() {
                 {appointment.time}
               </p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

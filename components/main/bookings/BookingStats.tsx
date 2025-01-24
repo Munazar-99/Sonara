@@ -2,7 +2,6 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Clock, Users, CheckCircle } from 'lucide-react';
-import { motion } from 'motion/react';
 
 const stats = [
   {
@@ -38,13 +37,8 @@ const stats = [
 export function BookingStats() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat, index) => (
-        <motion.div
-          key={stat.label}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-        >
+      {stats.map(stat => (
+        <div key={stat.label}>
           <Card className="overflow-hidden border-border bg-background dark:bg-zinc-800">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -63,7 +57,7 @@ export function BookingStats() {
               </p>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

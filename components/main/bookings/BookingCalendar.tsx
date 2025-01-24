@@ -26,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AnimatePresence, motion } from 'motion/react';
 
 interface Booking {
   id: number;
@@ -193,10 +192,8 @@ export function BookingCalendar() {
               const hasBookings = dayBookings.length > 0;
 
               return (
-                <motion.button
+                <button
                   key={day.toString()}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedDate(day)}
                   className={`relative flex h-16 flex-col items-center justify-start rounded-lg border-2 p-1 transition-colors sm:h-24 sm:p-2 ${
                     !isCurrentMonth
@@ -238,7 +235,7 @@ export function BookingCalendar() {
                       )}
                     </div>
                   )}
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -255,89 +252,73 @@ export function BookingCalendar() {
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px] pr-4 sm:h-[600px]">
-            <AnimatePresence mode="wait">
-              {filteredBookings.filter(
-                booking =>
-                  selectedDate && isSameDay(booking.date, selectedDate),
-              ).length > 0 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-4"
-                >
-                  {filteredBookings
-                    .filter(
-                      booking =>
-                        selectedDate && isSameDay(booking.date, selectedDate),
-                    )
-                    .map((booking, index) => (
-                      <motion.div
-                        key={booking.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="rounded-lg bg-zinc-50 p-4 transition-colors hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/50"
-                      >
-                        <div className="flex items-start gap-4">
-                          <Avatar>
-                            <AvatarImage
-                              src={booking.agent.avatar}
-                              alt={booking.agent.name}
-                            />
-                            <AvatarFallback>
-                              {booking.agent.name[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h4 className="truncate font-medium">
-                                  {booking.title}
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {booking.agent.name}
-                                </p>
-                              </div>
-                              <Badge
-                                variant="secondary"
-                                className={getStatusColor(booking.status)}
-                              >
-                                {booking.status}
-                              </Badge>
+            {filteredBookings.filter(
+              booking => selectedDate && isSameDay(booking.date, selectedDate),
+            ).length > 0 ? (
+              <div className="space-y-4">
+                {filteredBookings
+                  .filter(
+                    booking =>
+                      selectedDate && isSameDay(booking.date, selectedDate),
+                  )
+                  .map(booking => (
+                    <div
+                      key={booking.id}
+                      className="rounded-lg bg-zinc-50 p-4 transition-colors hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/50"
+                    >
+                      <div className="flex items-start gap-4">
+                        <Avatar>
+                          <AvatarImage
+                            src={booking.agent.avatar}
+                            alt={booking.agent.name}
+                          />
+                          <AvatarFallback>
+                            {booking.agent.name[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="truncate font-medium">
+                                {booking.title}
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                {booking.agent.name}
+                              </p>
                             </div>
-                            <div className="mt-2 space-y-1">
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <Clock className="mr-2 h-4 w-4" />
-                                {booking.duration}
-                              </div>
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <MapPin className="mr-2 h-4 w-4" />
-                                {booking.location}
-                              </div>
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <Globe className="mr-2 h-4 w-4" />
-                                {booking.timezone}
-                              </div>
+                            <Badge
+                              variant="secondary"
+                              className={getStatusColor(booking.status)}
+                            >
+                              {booking.status}
+                            </Badge>
+                          </div>
+                          <div className="mt-2 space-y-1">
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Clock className="mr-2 h-4 w-4" />
+                              {booking.duration}
+                            </div>
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <MapPin className="mr-2 h-4 w-4" />
+                              {booking.location}
+                            </div>
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Globe className="mr-2 h-4 w-4" />
+                              {booking.timezone}
                             </div>
                           </div>
                         </div>
-                      </motion.div>
-                    ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="py-8 text-center"
-                >
-                  <p className="text-muted-foreground">
-                    No bookings found for this date
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                <p className="text-muted-foreground">
+                  No bookings found for this date
+                </p>
+              </div>
+            )}
           </ScrollArea>
         </CardContent>
       </Card>

@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -39,9 +38,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { format, subDays, endOfToday, startOfToday } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
-import CallDetails from './CallDetails/CallDetails';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchCallsAction } from '@/features/calls/server/fetch-calls.action';
+import CallDetails from './CallDetails/CallDetails';
 
 export interface Call {
   id: string;
@@ -255,12 +254,7 @@ export function CallLogTable({ initialCalls }: { initialCalls: Call[] }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="h-full space-y-6"
-    >
+    <div className="h-full space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="w-full flex-1 sm:max-w-md">
           <div className="relative">
@@ -389,6 +383,6 @@ export function CallLogTable({ initialCalls }: { initialCalls: Call[] }) {
           {selectedCall && <CallDetails call={selectedCall} />}
         </SheetContent>
       </Sheet>
-    </motion.div>
+    </div>
   );
 }

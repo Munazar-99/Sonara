@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion } from 'framer-motion';
 import { CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -37,22 +36,7 @@ export default function CallDetails({ call }: { call: Call }) {
   };
 
   return (
-    <motion.div
-      className="flex h-full flex-col"
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 50 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* 
-      <div className="flex items-center justify-between px-6 pb-4">
-        <div className="flex items-center space-x-3">
-          <Phone className="h-5 w-5 text-muted-foreground" />
-          <span className="font-semibold text-lg">{call.phoneNumber}</span>
-        </div>
-        <span className="text-muted-foreground">{call.time}</span>
-      </div> */}
-
+    <div className="flex h-full flex-col">
       <div className="px-6 py-6">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -222,7 +206,7 @@ export default function CallDetails({ call }: { call: Call }) {
           </TabsContent>
         </ScrollArea>
       </Tabs>
-    </motion.div>
+    </div>
   );
 }
 

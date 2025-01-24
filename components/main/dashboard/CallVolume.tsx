@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'motion/react';
 import React from 'react';
 import {
   Line,
@@ -24,12 +23,7 @@ const data = [
 
 export function CallVolume() {
   return (
-    <motion.div
-      className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
+    <div className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6">
       <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white sm:text-2xl">
         Call Volume
       </h2>
@@ -107,6 +101,6 @@ export function CallVolume() {
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

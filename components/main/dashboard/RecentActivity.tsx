@@ -1,6 +1,5 @@
 import React from 'react';
 import { Phone, Calendar } from 'lucide-react';
-import { motion } from 'motion/react';
 
 const activities = [
   {
@@ -35,23 +34,15 @@ const activities = [
 
 export function RecentActivity() {
   return (
-    <motion.div
-      className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.6 }}
-    >
+    <div className="rounded-xl bg-white p-4 shadow-lg dark:bg-zinc-800 sm:p-6">
       <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white sm:text-2xl">
         Recent Activity
       </h2>
       <div className="space-y-4">
         {activities.map((activity, index) => (
-          <motion.div
+          <div
             key={index}
             className="flex items-center rounded-lg bg-gray-50 p-3 dark:bg-zinc-700 sm:p-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
           >
             <div
               className={`mr-3 rounded-full p-2 sm:mr-4 ${activity.type === 'call' ? 'bg-blue-500' : 'bg-green-500'}`}
@@ -88,9 +79,9 @@ export function RecentActivity() {
                 {activity.status}
               </p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

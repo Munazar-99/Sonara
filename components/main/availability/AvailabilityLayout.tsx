@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -8,12 +7,7 @@ interface DashboardLayoutProps {
 
 export function AvailabilityLayout({ children }: DashboardLayoutProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="container mx-auto max-w-5xl px-4 py-8"
-    >
+    <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="mb-8">
         <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
           Availability
@@ -23,6 +17,6 @@ export function AvailabilityLayout({ children }: DashboardLayoutProps) {
         </p>
       </div>
       {children}
-    </motion.div>
+    </div>
   );
 }
