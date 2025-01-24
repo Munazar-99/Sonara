@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,28 +12,93 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import { useCallData } from '../hooks/useCallData';
-import { Call } from '../types';
-import { dateRanges } from '../utils';
-import { CallTableContent } from './CallTableContent';
 import { CallTableHeader } from './CallTableHeader';
+import { CallTableContent } from './CallTableContent';
+import { CallTableFullSkeleton } from './CallTableFullSkeleton';
+import { dateRanges } from '../utils';
+import { Call } from '../types';
 
+const Sheet = lazy(() =>
+  import('@/components/ui/sheet').then(mod => ({
+    default: mod.Sheet,
+  })),
+);
+const SheetContent = lazy(() =>
+  import('@/components/ui/sheet').then(mod => ({
+    default: mod.SheetContent,
+  })),
+);
+const SheetHeader = lazy(() =>
+  import('@/components/ui/sheet').then(mod => ({
+    default: mod.SheetHeader,
+  })),
+);
+const SheetTitle = lazy(() =>
+  import('@/components/ui/sheet').then(mod => ({
+    default: mod.SheetTitle,
+  })),
+);
+const SheetDescription = lazy(() =>
+  import('@/components/ui/sheet').then(mod => ({
+    default: mod.SheetDescription,
+  })),
+);
 const CallDetails = lazy(() =>
   import('@/components/main/calls/CallDetails').then(mod => ({
     default: mod.default,
   })),
 );
+
 const CallTablePagination = lazy(() =>
   import('./CallTablePagination').then(mod => ({
     default: mod.default,
   })),
+);
+
+interface CallFiltersProps {
+  dateRange: string;
+  setDateRange: (value: string) => void;
+  filterType: 'inbound' | 'outbound' | 'all';
+  setFilterType: (value: 'inbound' | 'outbound' | 'all') => void;
+}
+
+const CallFilters = ({
+  dateRange,
+  setDateRange,
+  filterType,
+  setFilterType,
+}: CallFiltersProps) => (
+  <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+    <Select value={dateRange} onValueChange={setDateRange}>
+      <SelectTrigger className="w-full sm:w-[160px]">
+        <SelectValue placeholder="Select date range" />
+      </SelectTrigger>
+      <SelectContent>
+        {Object.entries(dateRanges).map(([key, { label }]) => (
+          <SelectItem key={key} value={key}>
+            {label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+    <Select
+      value={filterType}
+      onValueChange={(value: string) =>
+        setFilterType(value as 'inbound' | 'outbound' | 'all')
+      }
+    >
+      <SelectTrigger className="w-full sm:w-[140px]">
+        <Filter className="mr-2 h-4 w-4" />
+        <SelectValue placeholder="All Types" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Types</SelectItem>
+        <SelectItem value="inbound">Inbound</SelectItem>
+        <SelectItem value="outbound">Outbound</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 );
 
 export default function CallLogTable({
@@ -61,14 +126,23 @@ export default function CallLogTable({
   } = useCallData(initialCalls);
 
   useEffect(() => {
-    // Reset pagination when filters change
     setPaginationKeys([]);
   }, [searchQuery, filterType, dateRange, rowsPerPage, setPaginationKeys]);
+
+  const [isAnimated, setIsAnimated] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <CallTableFullSkeleton />;
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={isAnimated ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5 }}
       className="h-full space-y-6"
     >
@@ -84,36 +158,12 @@ export default function CallLogTable({
             />
           </div>
         </div>
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder="Select date range" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(dateRanges).map(([key, { label }]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={filterType}
-            onValueChange={(value: string) =>
-              setFilterType(value as 'inbound' | 'outbound' | 'all')
-            }
-          >
-            <SelectTrigger className="w-full sm:w-[140px]">
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="All Types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="inbound">Inbound</SelectItem>
-              <SelectItem value="outbound">Outbound</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <CallFilters
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          filterType={filterType}
+          setFilterType={setFilterType}
+        />
       </div>
 
       <Card className="overflow-hidden bg-white dark:bg-zinc-800/50">
@@ -145,22 +195,27 @@ export default function CallLogTable({
           paginationKeys.length === 0 || isLoading || isFetching
         }
         isDisabledNext={calls.length < rowsPerPage || isLoading || isFetching}
+        currentPage={paginationKeys.length + 1}
       />
 
-      <Sheet
-        open={selectedCall !== null}
-        onOpenChange={() => setSelectedCall(null)}
-      >
-        <SheetContent side="right" className="w-full p-0 sm:max-w-lg">
-          <SheetHeader className="p-4">
-            <SheetTitle>Call Details</SheetTitle>
-            <SheetDescription>
-              View detailed information about the selected call.
-            </SheetDescription>
-          </SheetHeader>
-          {selectedCall && <CallDetails call={selectedCall} />}
-        </SheetContent>
-      </Sheet>
+      {selectedCall && (
+        <Suspense fallback={null}>
+          <Sheet
+            open={selectedCall !== null}
+            onOpenChange={() => setSelectedCall(null)}
+          >
+            <SheetContent side="right" className="w-full p-0 sm:max-w-lg">
+              <SheetHeader className="p-4">
+                <SheetTitle>Call Details</SheetTitle>
+                <SheetDescription>
+                  View detailed information about the selected call.
+                </SheetDescription>
+              </SheetHeader>
+              <CallDetails call={selectedCall} />
+            </SheetContent>
+          </Sheet>
+        </Suspense>
+      )}
     </motion.div>
   );
 }

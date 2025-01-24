@@ -1,6 +1,7 @@
 import { ContentLayout } from '@/components/main/admin-panel/content-layout';
 import CallHeader from '@/components/main/calls/CallHeader';
 import { CallLogContent } from '@/features/calls/components/CallLogContent';
+import { CallTableFullSkeleton } from '@/features/calls/components/CallTableFullSkeleton';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
@@ -18,7 +19,7 @@ export default async function CallLogPage() {
           text="View and manage your conversation history"
         />
         <div className="mt-8">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<CallTableFullSkeleton />}>
             <CallLogContent />
           </Suspense>
         </div>

@@ -1,9 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-
-import { Call } from '../types';
 import { fetchCallsAction } from '../server/fetch-calls.action';
 import { dateRanges } from '../utils';
+import { Call } from '../types';
 
 export const useCallData = (initialCalls: Call[]) => {
   const [paginationKeys, setPaginationKeys] = useState<string[]>([]);
@@ -14,7 +13,10 @@ export const useCallData = (initialCalls: Call[]) => {
   const [dateRange, setDateRange] = useState<keyof typeof dateRanges>('month');
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const currentPaginationKey = paginationKeys[paginationKeys.length - 1];
+  const currentPaginationKey = useMemo(
+    () => paginationKeys[paginationKeys.length - 1],
+    [paginationKeys],
+  );
 
   const fetchCallsCallback = useCallback(() => {
     return fetchCallsAction({
@@ -42,18 +44,18 @@ export const useCallData = (initialCalls: Call[]) => {
     refetchOnMount: false,
   });
 
-  const calls = Array.isArray(data) ? data : [];
+  const calls = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (calls.length === rowsPerPage) {
       const lastCall = calls[calls.length - 1];
       setPaginationKeys(prev => [...prev, lastCall.id]);
     }
-  };
+  }, [calls, rowsPerPage]);
 
-  const handlePreviousPage = () => {
+  const handlePreviousPage = useCallback(() => {
     setPaginationKeys(prev => prev.slice(0, -1));
-  };
+  }, []);
 
   return {
     calls,
