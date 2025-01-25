@@ -7,6 +7,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 const nextConfig: NextConfig = bundleAnalyzer({
   /* config options here */
+  experimental: { inlineCss: true },
 });
 
 export default nextConfig;
