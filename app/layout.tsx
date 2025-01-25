@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import ReactQueryProvider from '@/components/providers/react-query';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,7 +34,10 @@ export default function RootLayout({
         <main>
           <Toaster />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <ReactQueryProvider>
+              <SpeedInsights />
+              {children}
+            </ReactQueryProvider>
           </ThemeProvider>
         </main>
       </body>
