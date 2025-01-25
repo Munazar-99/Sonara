@@ -1,5 +1,5 @@
 import { Filter } from 'lucide-react';
-import { dateRanges } from '../../utils';
+import { dateRanges } from '../utils';
 import {
   Select,
   SelectContent,

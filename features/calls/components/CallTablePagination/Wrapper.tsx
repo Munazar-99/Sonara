@@ -1,9 +1,9 @@
-import dynamic from 'next/dynamic';
 import { CallTablePaginationProps } from './CallTablePagination';
+import { lazy } from 'react';
 
-const CallTablePagination = dynamic(() => import('./CallTablePagination'), {});
+const CallTablePagination = lazy(() => import('./CallTablePagination'));
 
-export default function DynamicCallTablePagination({
+export default function LazyCallTablePagination({
   rowsPerPage,
   setRowsPerPage,
   handlePreviousPage,

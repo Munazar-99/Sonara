@@ -5,9 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody } from '@/components/ui/table';
 import { Search } from 'lucide-react';
 
-import { useCallData } from '../../hooks/useCallData';
-import { CallTableHeader } from '../CallTableHeader';
-import { Call } from '../../types';
 import {
   Sheet,
   SheetContent,
@@ -15,11 +12,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import DynamicCallDetails from '@/components/main/calls/CallDetails/Wrapper';
-import DynamicCallTableContent from '../CallTableContent/Wrapper';
-import DynamicCallTablePagination from '../CallTablePagination/Wrapper';
-import DynamicCallFilters from '../CallFilters/Wrapper';
-import CallTableFullSkeleton from '../Skeletons/CallTableFullSkeleton';
+import DynamicCallDetails from '@/features/calls/components/CallDetails/Wrapper';
+import { Call } from '../types';
+import { useCallData } from '../hooks/useCallData';
+import CallFilters from './CallFilters';
+import DynamicCallTableContent from './CallTableContent/Wrapper';
+import { CallTableHeader } from './CallTableHeader';
+import LazyCallTablePagination from './CallTablePagination/Wrapper';
+import CallTableFullSkeleton from './Skeletons/CallTableFullSkeleton';
 
 export default function CallLogTable({
   initialCalls,
@@ -67,7 +67,7 @@ export default function CallLogTable({
             />
           </div>
         </div>
-        <DynamicCallFilters
+        <CallFilters
           dateRange={dateRange}
           setDateRange={setDateRange}
           filterType={filterType}
@@ -95,7 +95,7 @@ export default function CallLogTable({
         </div>
       </Card>
 
-      <DynamicCallTablePagination
+      <LazyCallTablePagination
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         handlePreviousPage={handlePreviousPage}

@@ -1,5 +1,5 @@
 import { ContentLayout } from '@/components/main/admin-panel/content-layout';
-import CallHeader from '@/components/main/calls/CallHeader';
+import CallHeader from '@/features/calls/components/CallHeader';
 import { CallLogContent } from '@/features/calls/components/CallLogContent';
 import CallTableFullSkeleton from '@/features/calls/components/Skeletons/CallTableFullSkeleton';
 import { Metadata } from 'next';

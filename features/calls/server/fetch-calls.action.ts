@@ -5,7 +5,7 @@ import {
   PhoneCallResponse,
 } from 'retell-sdk/resources/call.mjs';
 import { retellClient } from '@/lib/retell/retell';
-import { Call } from '@/components/main/calls/CallLogTable';
+import { Call } from '../types';
 
 export async function fetchCallsAction({
   limit,
