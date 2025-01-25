@@ -34,12 +34,10 @@ export default function RootLayout({
         <main>
           <Toaster />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <ReactQueryProvider>
-              <SpeedInsights />
-              {children}
-            </ReactQueryProvider>
+            <ReactQueryProvider>{children}</ReactQueryProvider>
           </ThemeProvider>
         </main>
+        <SpeedInsights />
       </body>
     </html>
   );
