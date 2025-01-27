@@ -17,7 +17,7 @@ interface CallTableRowProps {
 }
 
 export const CallTableRow = ({ call, onClick }: CallTableRowProps) => {
-  const { date, time } = formatDate(call.dateTime);
+  const { date, time } = formatDate(call.dateTime!);
 
   return (
     <TableRow

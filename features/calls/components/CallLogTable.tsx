@@ -113,14 +113,19 @@ export default function CallLogTable({
             open={selectedCall !== null}
             onOpenChange={() => setSelectedCall(null)}
           >
-            <SheetContent side="right" className="w-full p-0 sm:max-w-lg">
-              <SheetHeader className="p-4">
+            <SheetContent
+              side="right"
+              className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-lg"
+            >
+              <SheetHeader className="flex-shrink-0 p-6 pb-0">
                 <SheetTitle>Call Details</SheetTitle>
                 <SheetDescription>
                   View detailed information about the selected call.
                 </SheetDescription>
               </SheetHeader>
-              <DynamicCallDetails call={selectedCall} />
+              <div className="flex-grow overflow-hidden">
+                <DynamicCallDetails call={selectedCall} />
+              </div>
             </SheetContent>
           </Sheet>
         </Suspense>
