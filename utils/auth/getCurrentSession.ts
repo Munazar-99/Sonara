@@ -1,16 +1,21 @@
+import 'server-only';
 import { validateSessionToken } from '@/server/db/auth/validateSessionToken';
 import { SessionValidationResult } from '@/types/auth/type';
-import { cookies } from 'next/headers';
 import { cache } from 'react';
+import { getSessionToken } from './getSessionToken';
 
 export const getCurrentSession = cache(
-  async (): Promise<SessionValidationResult> => {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_session')?.value ?? null;
-    if (token === null) {
-      return { session: null, user: null };
+  async (): Promise<SessionValidationResult['session']> => {
+    const token = await getSessionToken();
+    if (!token) {
+      return null;
     }
-    const result = await validateSessionToken(token);
-    return result;
+    try {
+      const { session } = await validateSessionToken(token);
+      return session;
+    } catch (error) {
+      console.error('Error validating session token:', error);
+      return null;
+    }
   },
 );

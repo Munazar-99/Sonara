@@ -5,6 +5,7 @@ import { validateRequest } from '@/server/db/auth/validateRequest';
 import { deleteSessionTokenCookie } from '@/utils/auth/deleteSessionTokenCookie';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
+// TODO: Add routing for when user is not authenticated
 export async function logOut(): Promise<{ error?: string; success?: boolean }> {
   try {
     const { session } = await validateRequest();

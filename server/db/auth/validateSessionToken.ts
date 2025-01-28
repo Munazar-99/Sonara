@@ -7,6 +7,7 @@ export async function validateSessionToken(
   token: string,
 ): Promise<SessionValidationResult> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+
   const result = await prisma.session.findUnique({
     where: {
       id: sessionId,

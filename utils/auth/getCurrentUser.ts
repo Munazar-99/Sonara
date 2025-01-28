@@ -1,3 +1,4 @@
+import 'server-only';
 import { validateRequest } from '@/server/db/auth/validateRequest';
 import { cache } from 'react';
 

@@ -6,6 +6,10 @@ import {
 } from 'retell-sdk/resources/call.mjs';
 import { retellClient } from '@/lib/retell/retell';
 import { Call } from '../types';
+import { getCurrentSession } from '@/utils/auth/getCurrentSession';
+import { redirect } from 'next/navigation';
+
+// TODO:implement logging
 
 export async function fetchCallsAction({
   limit,
@@ -19,12 +23,16 @@ export async function fetchCallsAction({
   lowerThreshold: number;
   direction?: 'inbound' | 'outbound';
   searchQuery?: string;
-}): Promise<Call[]> {
-  const apiKey = process.env.RETELL_API_KEY;
-  if (!apiKey) {
-    throw new Error(
-      'RETELL_API_KEY is not defined in the environment variables.',
-    );
+}): Promise<{
+  success: boolean;
+  error?: string;
+  data: Call[];
+  timestamp: string;
+}> {
+  const session = await getCurrentSession();
+  if (!session) {
+    console.log(new Date().toISOString(), 'No session found');
+    return redirect('/login');
   }
 
   const todayTimestamp = new Date().getTime();
@@ -39,14 +47,25 @@ export async function fetchCallsAction({
     ...(searchQuery ? { from_number: [searchQuery] } : {}),
   };
 
-  const response = (await retellClient.call.list({
-    limit,
-    pagination_key: paginationKey,
-    sort_order: 'descending',
-    filter_criteria: filterCriteria,
-  })) as PhoneCallResponse[];
+  let response: PhoneCallResponse[] = [];
+  try {
+    response = (await retellClient.call.list({
+      limit,
+      pagination_key: paginationKey,
+      sort_order: 'descending',
+      filter_criteria: filterCriteria,
+    })) as PhoneCallResponse[];
+  } catch (error) {
+    console.error('Error fetching calls:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch calls',
+      data: [],
+      timestamp: new Date().toISOString(),
+    };
+  }
 
-  return response.map(call => ({
+  const formattedCalls = response.map(call => ({
     id: call.call_id,
     dateTime: call.start_timestamp ?? 0,
     start: call.start_timestamp ?? 0,
@@ -64,4 +83,10 @@ export async function fetchCallsAction({
     summary: call.call_analysis?.call_summary ?? '',
     disconnectionReason: call.disconnection_reason,
   }));
+
+  return {
+    success: true,
+    data: formattedCalls,
+    timestamp: new Date().toISOString(),
+  };
 }

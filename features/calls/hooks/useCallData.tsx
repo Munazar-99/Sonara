@@ -18,14 +18,15 @@ export const useCallData = (initialCalls: Call[]) => {
     [paginationKeys],
   );
 
-  const fetchCallsCallback = useCallback(() => {
-    return fetchCallsAction({
+  const fetchCallsCallback = useCallback(async () => {
+    const response = await fetchCallsAction({
       limit: rowsPerPage,
       paginationKey: currentPaginationKey,
       lowerThreshold: dateRanges[dateRange].lowerThreshold,
       direction: filterType === 'all' ? undefined : filterType,
       searchQuery,
     });
+    return response.success ? response.data : [];
   }, [rowsPerPage, currentPaginationKey, dateRange, filterType, searchQuery]);
 
   const { data, isLoading, isFetching } = useQuery({
