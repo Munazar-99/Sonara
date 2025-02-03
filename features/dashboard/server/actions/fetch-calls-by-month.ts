@@ -1,9 +1,9 @@
 'use server';
 
 import { retellClient } from '@/lib/retell/retell';
-import { getCurrentSession } from '@/utils/auth/getCurrentSession';
+// import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { redirect } from 'next/navigation';
+// import { redirect } from 'next/navigation';
 import { PhoneCallResponse } from 'retell-sdk/resources/index.mjs';
 import {
   getMonthRange,
@@ -49,10 +49,10 @@ export async function fetchMonthlyCallMetrics(selectedMonth: number): Promise<{
   };
 }> {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
-      return redirect('/login');
-    }
+    // const session = await getCurrentSession();
+    // if (!session) {
+    //   return redirect('/login');
+    // }
 
     // Get start/end timestamps for the month
     const { startOfMonth, endOfMonth } = getMonthRange(selectedMonth);
