@@ -1,24 +1,14 @@
 import { memo } from 'react';
-
-import RecentActivity from './RecentActivity';
 import {
   ChartDataPoint,
   SentimentDataPoint,
   DisconnectionDataPoint,
   RecentCall,
 } from '../types';
-import dynamic from 'next/dynamic';
-
-// import dynamically
-const DynamicCallVolumeChart = dynamic(() => import('./charts/CallVolume'), {
-  ssr: false
-});
-const DynamicSentimentChart = dynamic(() => import('./charts/Sentiment'), {
-  ssr: false
-});
-const DynamicDisconnection = dynamic(() => import('./charts/Disconnection'), {
-  ssr: false
-});
+import CallVolumeChart from './charts/CallVolume';
+import Disconnection from './charts/Disconnection';
+import SentimentChart from './charts/Sentiment';
+import RecentActivity from './RecentActivity';
 
 interface DashboardChartsProps {
   chartData: ChartDataPoint[];
@@ -38,15 +28,15 @@ export const DashboardCharts = memo(
       <div className="mt-4 grid grid-cols-1 gap-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="h-full lg:col-span-2">
-            <DynamicCallVolumeChart chartData={chartData} />
+            <CallVolumeChart chartData={chartData} />
           </div>
           <div className="h-full">
-            <DynamicSentimentChart title="Sentiment Analysis" data={sentimentData} />
+            <SentimentChart title="Sentiment Analysis" data={sentimentData} />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="h-full">
-            <DynamicDisconnection
+            <Disconnection
               title="Disconnection Reason"
               data={disconnectionData}
             />
