@@ -54,6 +54,7 @@ export async function fetchMonthlyCallMetrics(selectedMonth: number): Promise<{
         sort_order: 'descending',
         filter_criteria: {
           call_type: ['phone_call'],
+          call_status: ['ended'],
           start_timestamp: {
             lower_threshold: startOfMonth,
             upper_threshold: endOfMonth,

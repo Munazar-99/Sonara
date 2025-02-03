@@ -66,79 +66,69 @@ export function formatTimeAgo(
 export function generateChartData(
   dailyMetrics: Map<number, number>,
 ): ChartDataPoint[] {
-  // Sort days by call count (descending)
-  const sortedDays = Array.from(dailyMetrics.entries()).sort(
-    (a, b) => b[1] - a[1],
-  );
-  // Top 3 days with the highest call volumes.
-  const topDays = sortedDays
-    .slice(0, 3)
-    .map(([day, count]) => ({ name: `${day}`, inbound: count }));
-  // Evenly distribute remaining days.
-  const remainingDays = evenlyDistributeDays(
-    dailyMetrics,
-    topDays.map(d => parseInt(d.name, 10)),
-  );
-  // Return the combined data sorted by day number (ascending).
-  return [...topDays, ...remainingDays].sort(
-    (a, b) => parseInt(a.name, 10) - parseInt(b.name, 10),
-  );
-}
+  const today = new Date();
+  const daysInMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0,
+  ).getDate(); // Get current month's total days
+  const intervalSize = Math.ceil(daysInMonth / 7); // Divide into 7 segments
+  const chartData: ChartDataPoint[] = [];
 
-/**
- * Evenly selects days from the daily metrics excluding provided days.
- *
- * @param dailyMetrics - A Map of day-of-month to call count.
- * @param excludeDays - An array of day numbers to exclude.
- * @returns An array of chart data points for the available days.
- */
-function evenlyDistributeDays(
-  dailyMetrics: Map<number, number>,
-  excludeDays: number[],
-): ChartDataPoint[] {
-  const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-  const availableDays = daysInMonth.filter(
-    day => !excludeDays.includes(day) && dailyMetrics.has(day),
-  );
-  const step = Math.max(Math.floor(availableDays.length / 4), 1);
-  return availableDays
-    .filter((_, index) => index % step === 0)
-    .map(day => ({ name: `${day}`, inbound: dailyMetrics.get(day) ?? 0 }));
+  for (let i = 0; i < 7; i++) {
+    const startDay = i * intervalSize + 1;
+    const endDay = Math.min((i + 1) * intervalSize, daysInMonth);
+
+    let maxCalls = 0;
+
+    for (let day = startDay; day <= endDay; day++) {
+      if (dailyMetrics.has(day)) {
+        maxCalls = Math.max(maxCalls, dailyMetrics.get(day)!);
+      }
+    }
+
+    chartData.push({
+      name: `${startDay}-${endDay}`,
+      inbound: maxCalls,
+    });
+  }
+
+  return chartData;
 }
 
 // **Pure Function**: Generates metrics data (Prevents re-renders)
 export const getMetrics = (metrics: CallMetrics): StatCardProps[] => [
   {
-    title: "Live AI Agents",
+    title: 'Live AI Agents',
     value: `${metrics.concurrency.currentCalls} / ${metrics.concurrency.maxCalls}`,
     icon: Users,
-    trend: "+2.5% from previous week",
+    trend: '+2.5% from previous week',
     trendUp: true,
-    iconColor: "text-blue-500 dark:text-blue-400",
+    iconColor: 'text-blue-500 dark:text-blue-400',
   },
   {
-    title: "Total Calls",
+    title: 'Total Calls',
     value: `${metrics.totalCalls}`,
     icon: PhoneCall,
-    trend: "-0.3% from previous week",
+    trend: '-0.3% from previous week',
     trendUp: false,
-    iconColor: "text-indigo-500 dark:text-indigo-400",
+    iconColor: 'text-indigo-500 dark:text-indigo-400',
   },
   {
-    title: "Average Talk Time",
+    title: 'Average Talk Time',
     value: metrics.averageTalkTime,
     icon: Clock,
-    trend: "1 minute faster than last week",
+    trend: '1 minute faster than last week',
     trendUp: true,
-    iconColor: "text-cyan-500 dark:text-cyan-400",
+    iconColor: 'text-cyan-500 dark:text-cyan-400',
   },
   {
-    title: "Total Usage",
+    title: 'Total Usage',
     value: `${metrics.totalUsage} min`,
     icon: BarChart,
     trend: null,
     trendUp: null,
-    iconColor: "text-indigo-500 dark:text-indigo-500",
+    iconColor: 'text-indigo-500 dark:text-indigo-500',
     isPackage: true,
     usage: {
       current: 180,
