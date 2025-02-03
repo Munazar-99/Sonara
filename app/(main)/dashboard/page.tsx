@@ -1,6 +1,8 @@
 import { ContentLayout } from '@/components/main/admin-panel/content-layout';
-import DashboardContent from '@/components/main/dashboard/DashboardContent';
+import DashboardPage from '@/features/dashboard/components/DashboardPage';
+import DashboardSkeleton from '@/features/dashboard/components/DashboardSkeleton';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Dashboard | LexAI',
@@ -8,10 +10,13 @@ export const metadata: Metadata = {
     'LexAI dashboard with real-time analytics and call center metrics',
 };
 
-export default async function DashboardPage() {
+export default async function Page() {
+
   return (
     <ContentLayout title="Dashboard">
-      <DashboardContent />
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardPage  />
+      </Suspense>
     </ContentLayout>
   );
 }
