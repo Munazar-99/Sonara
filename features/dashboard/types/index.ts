@@ -1,6 +1,6 @@
 /** Data types for production metrics */
 
-import { PhoneCallResponse } from "retell-sdk/resources/index.mjs";
+import { PhoneCallResponse } from 'retell-sdk/resources/index.mjs';
 
 export type ConcurrencyData = {
   maxCalls: number;
@@ -32,20 +32,22 @@ export type DisconnectionDataPoint = {
 };
 
 export type RecentCall = {
-  id: string;
-  dateTime: number;
-  start: number;
-  end: number;
-  direction: string;
-  callerId: string;
-  duration: number;
-  recordingUrl: string;
+  id: PhoneCallResponse['call_id'];
+  dateTime: PhoneCallResponse['start_timestamp'];
+  start: PhoneCallResponse['start_timestamp'];
+  end: PhoneCallResponse['end_timestamp'];
+  direction: PhoneCallResponse['direction'];
+  callerId: PhoneCallResponse['from_number'];
+  duration: NonNullable<
+    PhoneCallResponse['call_cost']
+  >['total_duration_seconds'];
+  recordingUrl: PhoneCallResponse['recording_url'];
   cost: number;
-  sentiment?: string;
+  sentiment: NonNullable<PhoneCallResponse['call_analysis']>['user_sentiment']; // Ensure call_analysis is not undefined
   transcriptObject: PhoneCallResponse['transcript_object'];
-  outcome: boolean;
-  summary: string;
-  disconnectionReason?: string;
+  outcome: NonNullable<PhoneCallResponse['call_analysis']>['call_successful'];
+  summary: NonNullable<PhoneCallResponse['call_analysis']>['call_summary'];
+  disconnectionReason: PhoneCallResponse['disconnection_reason'];
   timeAgo: string;
 };
 
