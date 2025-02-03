@@ -77,3 +77,14 @@ export interface StatCardProps {
     percentage: number;
   };
 }
+
+export interface MetricsData {
+  totalCalls: number;
+  totalDuration: number;
+  dailyMetrics: Map<number, number>;
+  sentimentCounts: Record<'positive' | 'neutral' | 'negative', number>;
+  disconnectionCounts: Record<
+    'userHangup' | 'agentHangup' | 'systemError',
+    number
+  >;
+}

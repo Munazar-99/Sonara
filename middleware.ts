@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import type { NextRequest } from 'next/server';
 
-export const config = { matcher: ['/calls'] };
+export const config = { matcher: ['/calls', '/dashboard'] };
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (request.method === 'GET') {
@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       // a new session wasn't set when handling the request.
       response.cookies.set('auth_session', token, {
         path: '/',
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60,
         sameSite: 'lax',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

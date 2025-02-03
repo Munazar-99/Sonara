@@ -1,9 +1,9 @@
 'use server';
 
 import { retellClient } from '@/lib/retell/retell';
-// import { getCurrentSession } from '@/utils/auth/getCurrentSession';
+import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-// import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { PhoneCallResponse } from 'retell-sdk/resources/index.mjs';
 import {
   getMonthRange,
@@ -18,18 +18,8 @@ import {
   DisconnectionDataPoint,
   RecentCall,
   ConcurrencyData,
+  MetricsData,
 } from '../../types';
-
-interface MetricsData {
-  totalCalls: number;
-  totalDuration: number;
-  dailyMetrics: Map<number, number>;
-  sentimentCounts: Record<'positive' | 'neutral' | 'negative', number>;
-  disconnectionCounts: Record<
-    'userHangup' | 'agentHangup' | 'systemError',
-    number
-  >;
-}
 
 /**
  * Fetches call metrics for the selected month.
@@ -49,10 +39,10 @@ export async function fetchMonthlyCallMetrics(selectedMonth: number): Promise<{
   };
 }> {
   try {
-    // const session = await getCurrentSession();
-    // if (!session) {
-    //   return redirect('/login');
-    // }
+    const session = await getCurrentSession();
+    if (!session) {
+      return redirect('/login');
+    }
 
     // Get start/end timestamps for the month
     const { startOfMonth, endOfMonth } = getMonthRange(selectedMonth);

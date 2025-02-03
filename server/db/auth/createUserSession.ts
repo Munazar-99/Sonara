@@ -11,7 +11,7 @@ export async function createUserSession(
   const session: Session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60),
   };
   await prisma.session.create({
     data: session,
