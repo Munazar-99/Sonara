@@ -1,16 +1,20 @@
 import { ContentLayout } from '@/components/main/admin-panel/content-layout';
-import { SettingsPage } from '@/components/main/settings/SettingsPage';
+import ProfileSettingsSkeleton from '@/features/settings/components/ProfileSettingsSkeleton';
+import Settingspage from '@/features/settings/components/Settingspage';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Settings | LexAI',
   description: 'Manage your account settings and preferences',
 };
 
-export default function Settings() {
+export default async function Settings() {
   return (
-    <ContentLayout title="Account">
-      <SettingsPage />
+    <ContentLayout title="Settings">
+      <Suspense fallback={<ProfileSettingsSkeleton />}>
+        <Settingspage />
+      </Suspense>
     </ContentLayout>
   );
 }
