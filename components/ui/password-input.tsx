@@ -16,7 +16,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="relative">
         <Input
           type={showPassword ? 'text' : 'password'}
-          className={cn('hide-password-toggle pr-10', className)}
+          className={cn('hide-password-toggle pr-10 text-dark', className)}
           ref={ref}
           {...props}
         />
@@ -30,9 +30,9 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
         >
           {showPassword && !disabled ? (
-            <EyeIcon className="h-4 w-4" aria-hidden="true" />
+            <EyeIcon className="h-4 w-4 text-dark" aria-hidden="true" />
           ) : (
-            <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
+            <EyeOffIcon className="h-4 w-4 text-dark" aria-hidden="true" />
           )}
           <span className="sr-only">
             {showPassword ? 'Hide password' : 'Show password'}

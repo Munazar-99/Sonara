@@ -25,6 +25,7 @@ import { emailSchema } from '../utils/zod/schema';
 import { EmailFormValues } from '../utils/types/type';
 import SubmitButton from '@/components/ui/submit-button';
 import RequiredFormLabel from '@/components/ui/required-form-label';
+import { useMutation } from '@tanstack/react-query';
 
 const RequestReset = () => {
   const form = useForm<EmailFormValues>({
@@ -34,44 +35,44 @@ const RequestReset = () => {
     },
   });
 
-  const onSubmit = async (data: EmailFormValues) => {
-    try {
-      // Call the reset-password function
-      const response = await requestResetAction(data);
-
-      // Handle reset-password response
+  const mutation = useMutation({
+    mutationFn: async (data: EmailFormValues) => await requestResetAction(data),
+    onSuccess: response => {
       if (response && response.error) {
         handleToastNotification('error', '', response.error);
       } else {
         handleToastNotification('success', 'Reset Password Sent', '');
       }
-    } catch (error) {
-      // Handle unexpected errors, including redirect errors
-
+    },
+    onError: error => {
       console.error(`Password reset request error: ${error}`);
-
       handleToastNotification(
         'error',
         'Unexpected Error',
         'Please try again later.',
       );
-    }
-  };
+    },
+  });
+  function onSubmit(data: EmailFormValues) {
+    mutation.mutate(data);
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <Card className="w-full max-w-lg">
+    <div className="flex items-center justify-center bg-white p-4">
+      <Card className="w-full max-w-lg !border-none bg-white shadow-none">
         <CardHeader>
           <div className="mb-4 flex w-full justify-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              {form.formState.isSubmitting ? (
+              {mutation.isPending ? (
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               ) : (
                 <Mail className="h-6 w-6 text-primary" />
               )}
             </div>
           </div>
-          <CardTitle className="text-center text-2xl">Reset Password</CardTitle>
+          <CardTitle className="text-center text-2xl text-dark">
+            Reset Password
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your email address and we&#39;ll send you a link to reset your
             password
@@ -91,6 +92,7 @@ const RequestReset = () => {
                         type="email"
                         placeholder="Enter your email address"
                         {...field}
+                        className="border-stroke text-dark focus:border-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -101,7 +103,7 @@ const RequestReset = () => {
             <CardFooter>
               <SubmitButton
                 className="w-full"
-                isSubmitting={form.formState.isSubmitting}
+                isSubmitting={mutation.isPending}
                 loadingMessage="Sending Reset Link"
               >
                 Send Reset Link

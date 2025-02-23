@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import { encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-
 import { isWithinExpirationDate } from 'oslo';
 
 import { getTokenById } from '../db/getTokenById';
@@ -16,43 +15,48 @@ import { hashPassword } from '@/utils/auth/hashPassword';
 
 export async function setPasswordAction(
   token: string,
-  formData: z.infer<typeof passwordSchema>,
+  formData: z.infer<typeof passwordSchema>
 ): Promise<{ error?: string; success?: boolean }> {
   try {
-    const { newPassword } = passwordSchema.parse(formData);
+    // Validate form data
+    const validationResult = passwordSchema.safeParse(formData);
+    if (!validationResult.success) {
+      return { error: validationResult.error.errors[0].message };
+    }
 
+    const { newPassword } = validationResult.data;
+
+    // Generate session ID from token
     const sessionId = encodeHexLowerCase(
-      sha256(new TextEncoder().encode(token)),
+      sha256(new TextEncoder().encode(token))
     );
 
+    // Retrieve the password reset token from the database
     const tokenRecord = await getTokenById(sessionId);
     if (!tokenRecord || !isWithinExpirationDate(tokenRecord.expiresAt)) {
-      throw new Error('Invalid or expired token');
-    }
-    if (!newPassword) {
-      throw new Error('newPassword is required');
+      return { error: 'Invalid or expired token.' };
     }
 
+    // Hash the new password
     const passwordHash = await hashPassword(newPassword);
+
+    // Perform atomic transaction: update password and delete reset session
     await deleteUserPasswordResetSessionAndSetNewPassword(
       tokenRecord.userId,
       passwordHash,
-      tokenRecord.id,
+      tokenRecord.id
     );
 
-    // Create a new session for the user
+    // Create a new user session
     const sessionToken = generateSessionToken();
     const session = await createUserSession(sessionToken, tokenRecord.userId);
+
+    // Set session token as an HTTP-only cookie
     await setSessionTokenCookie(sessionToken, session.expiresAt);
 
     return { success: true };
   } catch (error) {
     console.error('Password reset error:', error);
-    return {
-      error:
-        error instanceof z.ZodError
-          ? error.errors[0].message
-          : 'An error occurred while resetting the password.',
-    };
+    return { error: 'An error occurred while resetting the password. Please try again.' };
   }
 }

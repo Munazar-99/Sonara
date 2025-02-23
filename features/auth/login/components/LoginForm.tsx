@@ -12,7 +12,6 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { useRouter } from 'next/navigation';
 import { loginAction } from '@/features/auth/login/sever/actions/login.action';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -20,6 +19,7 @@ import RequiredFormLabel from '@/components/ui/required-form-label';
 import { signInSchema } from '../utils/zod/schema';
 import { handleToastNotification } from '@/components/toast/HandleToast';
 import SubmitButton from '@/components/ui/submit-button';
+import { useMutation } from '@tanstack/react-query';
 
 export function LoginForm() {
   const router = useRouter();
@@ -31,33 +31,26 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof signInSchema>) {
-    try {
-      // Call the sign-in function
-      const response = await loginAction(data);
-
-      // Handle sign-in response
+  const mutation = useMutation({
+    mutationFn: loginAction,
+    onSuccess: (response) => {
       if (response && response.error) {
         handleToastNotification('error', 'Sign-in Failed', response.error);
       } else {
         router.push('/dashboard');
         handleToastNotification('success', 'Sign-in Successful!', '');
       }
-    } catch (error) {
-      // Handle unexpected errors, including redirect errors
-      if (isRedirectError(error)) {
-        console.warn('Redirect error occurred: ', error);
-      } else {
-        console.error(`Sign-in error: ${error}`);
+    },
+    onError: (error) => {
+      console.error(`Sign-in error: ${error}`);
+      handleToastNotification('error', 'Unexpected Error', 'Please try again later.');
+    },
+  });
 
-        handleToastNotification(
-          'error',
-          'Unexpected Error',
-          'Please try again later.',
-        );
-      }
-    }
+  function onSubmit(data: z.infer<typeof signInSchema>) {
+    mutation.mutate(data);
   }
+
   return (
     <Form {...form}>
       <form
@@ -65,10 +58,8 @@ export function LoginForm() {
         className="flex flex-col gap-4"
       >
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold">Welcome Back!</h1>
-          <p className="text-sm text-muted-foreground">
-            Please sign in to continue
-          </p>
+          <h1 className="text-2xl font-bold text-dark">Welcome Back!</h1>
+          <p className="text-sm text-body-color">Please sign in to continue</p>
         </div>
         <div className="grid gap-6">
           <FormField
@@ -84,9 +75,10 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
+                    className="border-stroke focus:border-primarye text-dark"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-destructive" />
               </FormItem>
             )}
           />
@@ -100,7 +92,7 @@ export function LoginForm() {
                   <Link
                     prefetch={true}
                     href="/forgot-password"
-                    className="text-sm underline-offset-4 hover:underline"
+                    className="text-sm text-dark underline-offset-4 hover:underline"
                   >
                     Forgot your password?
                   </Link>
@@ -111,21 +103,23 @@ export function LoginForm() {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
+                    className="border-stroke focus:border-primary"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-destructive" />
               </FormItem>
             )}
           />
           <SubmitButton
-            isSubmitting={form.formState.isSubmitting}
+            isSubmitting={mutation.isPending}
             loadingMessage="Please wait"
+            className="bg-primary text-white hover:bg-primary/90"
           >
             Login
           </SubmitButton>
         </div>
         <div className="text-center text-sm">
-          <p className="text-muted-foreground">
+          <p className="text-body-color">
             By signing in, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service

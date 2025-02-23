@@ -4,23 +4,30 @@ import { invalidateSession } from '@/server/db/auth/invalidateSession';
 import { validateRequest } from '@/server/db/auth/validateRequest';
 import { deleteSessionTokenCookie } from '@/utils/auth/deleteSessionTokenCookie';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { redirect } from 'next/navigation';
 
-// TODO: Add routing for when user is not authenticated
 export async function logOut(): Promise<{ error?: string; success?: boolean }> {
   try {
     const { session } = await validateRequest();
+
+    // If no session exists, redirect immediately
     if (!session) {
-      throw new Error('User not authenticated');
+      return redirect('/login');
     }
 
-    await invalidateSession(session.id);
-    await deleteSessionTokenCookie();
-    return { success: true }; // Indicate success
+    // Invalidate session and clear session token cookie
+    await Promise.all([
+      invalidateSession(session.id),
+      deleteSessionTokenCookie(),
+    ]);
+
+    return { success: true };
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;
     }
-    console.error(error);
-    return { error: 'An error occurred during sign out process' };
+
+    console.error('Logout error:', error);
+    return { error: 'An error occurred during the sign-out process. Please try again.' };
   }
 }

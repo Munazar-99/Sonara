@@ -2,7 +2,7 @@ import { FormLabel } from "@/components/ui/form";
 import React from "react";
 
 const RequiredFormLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <FormLabel className='text-primary'>
+  <FormLabel className='text-dark'>
     {children} <span className='text-red-500'>*</span>
   </FormLabel>
 );

@@ -1,8 +1,5 @@
 'use server';
 
-import { z } from 'zod';
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
-
 import { Ratelimit } from '@upstash/ratelimit';
 import { redis } from '@/lib/upstash/upstash';
 import { headers } from 'next/headers';
@@ -14,69 +11,57 @@ import { generateSessionToken } from '@/utils/auth/generateSessionToken';
 import { sendResetLinkEmail } from '@/server/email/sendResetLinkEmail';
 import { emailSchema } from '../../utils/zod/schema';
 
-// implement upstash rate limiting
+// Implement Upstash rate limiting
 const rateLimit = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(2, '60s'),
 });
 
 export async function requestResetAction(
-  formData: EmailFormValues,
+  formData: EmailFormValues
 ): Promise<{ error?: string; success?: boolean }> {
   try {
-    const ip = (await headers()).get('x-forwarded-for');
-    const { success: withinLimit } = await rateLimit.limit(ip!);
+    const ip = (await headers()).get('x-forwarded-for') ?? 'unknown-ip';
+    const { success: withinLimit } = await rateLimit.limit(ip);
     if (!withinLimit) {
-      return { error: 'Too many requests. Please wait 1 minutes.' };
+      return { error: 'Too many requests. Please wait 1 minute.' };
     }
 
-    // Validate the incoming form data
-    const { email } = emailSchema.parse(formData);
+    // Validate the incoming form data using safeParse to prevent crashes
+    const validationResult = emailSchema.safeParse(formData);
+    if (!validationResult.success) {
+      return { error: 'Invalid input. Please check your email.' };
+    }
+    const { email } = validationResult.data;
 
-    // Check if the user exists in the database
+    // Retrieve user from database
     const existingUser = await getUserByEmail(email);
-
-    // Handle invalid user or password
     if (!existingUser) {
-      // Delay the response to prevent user enumeration
+      // Prevent user enumeration by always returning success
       await new Promise(resolve => setTimeout(resolve, 1500));
       return { success: true };
     }
 
-    // Create a new session for the user
+    // Invalidate previous password reset sessions
     await invalidateUserPasswordResetSessions(existingUser.id);
-    const token = generateSessionToken();
-    await createPasswordResetSession(
-      token,
-      existingUser.id,
-      existingUser.email,
-    );
 
-    //send password reset email
+    // Generate and store a new password reset token
+    const token = generateSessionToken();
+    await createPasswordResetSession(token, existingUser.id, existingUser.email);
+
+    // Send the password reset email
     const sendReset = await sendResetLinkEmail(
       existingUser.email,
       token,
-      existingUser.firstName,
+      existingUser.firstName
     );
     if (!sendReset.success) {
-      return { error: 'Something went wrong. Please try again.' };
+      return { error: 'Failed to send reset email. Please try again later.' };
     }
 
-    return { success: true }; // Indicate success
+    return { success: true };
   } catch (error) {
-    // Check if the error is a known redirect error
-    if (isRedirectError(error)) {
-      // Optionally log the error or handle specific logic
-      throw error;
-    }
-
-    // Handle known Zod validation errors
-    if (error instanceof z.ZodError) {
-      return { error: 'Invalid input. Please check your email and password.' };
-    }
-
-    // Handle unexpected errors
-    console.error('Sign-in error: ', error);
-    return { error: 'Something went wrong. Please try again.' };
+    console.error('Password reset request error:', error);
+    return { error: 'An unexpected error occurred. Please try again later.' };
   }
 }

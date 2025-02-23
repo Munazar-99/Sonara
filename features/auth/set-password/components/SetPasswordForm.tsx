@@ -1,5 +1,9 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Card,
   CardContent,
@@ -16,12 +20,9 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { PasswordInput } from '@/components/ui/password-input';
 import RequiredFormLabel from '@/components/ui/required-form-label';
-import { useRouter } from 'next/navigation';
-import { setPasswordAction } from '@/features/auth/set-password/server/actions/set-password';
+import { setPasswordAction } from '@/features/auth/set-password/server/actions/set-password.action';
 import { handleToastNotification } from '../../../../components/toast/HandleToast';
 import { passwordSchema } from '../utils/zod/schema';
 import { PasswordFormValues } from '../utils/types/type';
@@ -29,7 +30,7 @@ import SubmitButton from '@/components/ui/submit-button';
 
 const ChangePassword = ({ token }: { token: string }) => {
   const router = useRouter();
-
+  
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -38,16 +39,11 @@ const ChangePassword = ({ token }: { token: string }) => {
     },
   });
 
-  const onSubmit = async (data: PasswordFormValues) => {
-    if (!token) {
-      console.error('Param Token not found');
-      return;
-    }
-    try {
-      // Call the reset-password function
-      const response = await setPasswordAction(token, data);
-
-      // Handle reset-password response
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data: PasswordFormValues) => {
+      return await setPasswordAction(token, data);
+    },
+    onSuccess: (response) => {
       if (response && response.error) {
         handleToastNotification(
           'error',
@@ -58,29 +54,30 @@ const ChangePassword = ({ token }: { token: string }) => {
         handleToastNotification('success', 'Password Reset Successfully', '');
         router.push('/dashboard');
       }
-    } catch (error) {
-      // Handle unexpected errors, including redirect errors
-
-      console.error(`Sign-in error: ${error}`);
-
+    },
+    onError: () => {
       handleToastNotification(
         'error',
         'Unexpected Error',
         'Please try again later.',
       );
-    }
+    },
+  });
+
+  const onSubmit = (data: PasswordFormValues) => {
+    mutate(data);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <Card className="w-full max-w-lg">
+    <div className="flex items-center justify-center bg-white p-4">
+      <Card className="w-full max-w-lg border-none bg-white shadow-none">
         <CardHeader>
           <div className="mb-4 flex w-full justify-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <KeyRound className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-center text-2xl">
+          <CardTitle className="text-center text-2xl text-dark">
             Change Password
           </CardTitle>
           <CardDescription className="text-center">
@@ -96,16 +93,15 @@ const ChangePassword = ({ token }: { token: string }) => {
                 render={({ field }) => (
                   <FormItem>
                     <RequiredFormLabel>New Password</RequiredFormLabel>
-                    <div className="relative">
-                      <FormControl>
-                        <PasswordInput
-                          required
-                          {...field}
-                          placeholder="Enter your password"
-                          aria-label="Password"
-                        />
-                      </FormControl>
-                    </div>
+                    <FormControl>
+                      <PasswordInput
+                        required
+                        {...field}
+                        placeholder="Enter your password"
+                        aria-label="Password"
+                        className="border-stroke focus:border-primary"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -122,6 +118,7 @@ const ChangePassword = ({ token }: { token: string }) => {
                         {...field}
                         placeholder="Confirm your password"
                         aria-label="Password"
+                        className="border-stroke focus:border-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -131,7 +128,7 @@ const ChangePassword = ({ token }: { token: string }) => {
             </CardContent>
             <CardFooter>
               <SubmitButton
-                isSubmitting={form.formState.isSubmitting}
+                isSubmitting={isPending}
                 loadingMessage="Setting New Password"
                 className="w-full"
               >
