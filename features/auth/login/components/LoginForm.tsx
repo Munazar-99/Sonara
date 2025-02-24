@@ -33,7 +33,7 @@ export function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: loginAction,
-    onSuccess: (response) => {
+    onSuccess: response => {
       if (response && response.error) {
         handleToastNotification('error', 'Sign-in Failed', response.error);
       } else {
@@ -41,9 +41,13 @@ export function LoginForm() {
         handleToastNotification('success', 'Sign-in Successful!', '');
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error(`Sign-in error: ${error}`);
-      handleToastNotification('error', 'Unexpected Error', 'Please try again later.');
+      handleToastNotification(
+        'error',
+        'Unexpected Error',
+        'Please try again later.',
+      );
     },
   });
 
@@ -75,10 +79,10 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
-                    className="border-stroke focus:border-primarye text-dark"
+                    className="focus:border-primarye border-stroke text-dark"
                   />
                 </FormControl>
-                <FormMessage className="text-destructive" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -106,7 +110,7 @@ export function LoginForm() {
                     className="border-stroke focus:border-primary"
                   />
                 </FormControl>
-                <FormMessage className="text-destructive" />
+                <FormMessage className="!text-red-500" />
               </FormItem>
             )}
           />
