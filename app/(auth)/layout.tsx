@@ -1,4 +1,8 @@
-import { SplineSceneBasic } from "@/features/auth/login/components/SplineSceneBasic";
+import dynamic from 'next/dynamic';
+
+const SplineSceneBasic = dynamic(
+  () => import('@/features/auth/login/components/SplineSceneBasic'),
+);
 
 export default function AuthLayout({
   children,

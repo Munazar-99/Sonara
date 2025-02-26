@@ -9,7 +9,7 @@ import { VoiceResponse } from 'retell-sdk/resources/voice.mjs';
 async function fetchUser(): Promise<{ email: string; name: string }> {
   try {
     const user = await getCurrentUser();
-    if (!user) throw redirect('/login');
+    if (!user) return redirect('/login');
 
     return {
       email: user.email,

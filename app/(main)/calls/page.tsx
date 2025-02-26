@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function CallLogPage() {
   return (
     <ContentLayout title="Call Logs">
-      <div className="mx-auto max-w-7xl px-2 py-6 sm:py-8">
+      <div className="container mx-auto space-y-6 px-4 py-8 lg:px-8 lg:py-10">
         <CallHeader
           heading="Call Logs"
           text="View and manage your conversation history"

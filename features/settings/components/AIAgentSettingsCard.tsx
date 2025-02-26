@@ -40,6 +40,7 @@ export default function AIAgentSettingsCard({
   onVoiceSelect,
 }: AIAgentSettingsCardProps) {
   const [isVoiceDialogOpen, setIsVoiceDialogOpen] = useState(false);
+  console.log({ voices });
   const [tempSelectedVoice, setTempSelectedVoice] =
     useState<VoiceResponse | null>(null);
   const [accentFilter, setAccentFilter] = useState('All');
@@ -99,7 +100,7 @@ export default function AIAgentSettingsCard({
   );
 
   return (
-    <Card className="hover-card">
+    <Card className="hover-card dark:bg-gray-dark">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-primary" />
@@ -134,12 +135,12 @@ export default function AIAgentSettingsCard({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 dark:bg-dark dark:hover:bg-primary dark:hover:text-white"
               >
                 Change Voice
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[95vw] max-w-[550px] p-0">
+            <DialogContent className="w-[95vw] max-w-[550px] bg-gray-dark p-0">
               <DialogHeader className="border-b px-6 py-4">
                 <DialogTitle className="text-xl">Select a Voice</DialogTitle>
               </DialogHeader>

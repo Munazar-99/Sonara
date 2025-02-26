@@ -5,9 +5,9 @@ import {
   PhoneCallResponse,
 } from 'retell-sdk/resources/call.mjs';
 import { retellClient } from '@/lib/retell/retell';
-import { Call } from '../types';
 import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { redirect } from 'next/navigation';
+import { Call } from '../../types';
 
 // TODO:implement logging
 
@@ -65,24 +65,33 @@ export async function fetchCallsAction({
     };
   }
 
-  const formattedCalls = response.map(call => ({
-    id: call.call_id,
-    dateTime: call.start_timestamp ?? 0,
-    start: call.start_timestamp ?? 0,
-    end: call.end_timestamp ?? 0,
-    direction: call.direction,
-    callerId: call.from_number,
-    duration: call.call_cost?.total_duration_seconds ?? 0,
-    recordingUrl: call.recording_url, // Fallback to an empty string
-    cost: call.call_cost?.combined_cost
-      ? call.call_cost.combined_cost / 100
-      : 0,
-    sentiment: call.call_analysis?.user_sentiment,
-    transcriptObject: call.transcript_object ?? [],
-    outcome: call.call_analysis?.call_successful ?? false,
-    summary: call.call_analysis?.call_summary ?? '',
-    disconnectionReason: call.disconnection_reason,
-  }));
+  const formattedCalls = response.map(call => {
+    const durationSeconds = call.call_cost?.total_duration_seconds ?? 0;
+
+    let cost = 0.5; // First minute charge
+
+    if (durationSeconds > 60) {
+      const extraSeconds = durationSeconds - 60;
+      cost += extraSeconds * (0.5 / 60); // Per-second charge after the first minute
+    }
+
+    return {
+      id: call.call_id,
+      dateTime: call.start_timestamp ?? 0,
+      start: call.start_timestamp ?? 0,
+      end: call.end_timestamp ?? 0,
+      direction: call.direction,
+      callerId: call.from_number,
+      duration: durationSeconds,
+      recordingUrl: call.recording_url ?? '',
+      cost: parseFloat(cost.toFixed(2)), // Keep only 2 decimal places
+      sentiment: call.call_analysis?.user_sentiment,
+      transcriptObject: call.transcript_object ?? [],
+      outcome: call.call_analysis?.call_successful ?? false,
+      summary: call.call_analysis?.call_summary ?? '',
+      disconnectionReason: call.disconnection_reason,
+    };
+  });
 
   return {
     success: true,

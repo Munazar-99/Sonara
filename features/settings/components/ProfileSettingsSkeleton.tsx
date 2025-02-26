@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProfileSettingsSkeleton() {
   return (
-    <div className="min-h-screen from-background to-muted/20">
+    <div className="min-h-screen">
       <div className="container mx-auto space-y-6 px-4 py-8 lg:px-8 lg:py-10">
         <div className="mb-8 flex items-start justify-between sm:mb-12">
           <div className="space-y-1">
@@ -55,7 +55,7 @@ export default function ProfileSettingsSkeleton() {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div className="rounded-lg border bg-white text-card-foreground shadow-sm dark:bg-gray-dark/80">
       <div className="space-y-6 p-6">
         <div className="flex items-center space-x-4">
           <Skeleton className="h-12 w-12 rounded-full" />

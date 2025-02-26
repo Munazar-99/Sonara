@@ -43,48 +43,56 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   return (
     <div className="flex-shrink-0 p-6 pt-0">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={restart}
-              className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={togglePlayPause}
-              className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
-            >
-              {!isReady ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : isPlaying ? (
-                <Pause className="h-4 w-4" />
-              ) : (
-                <Play className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
-            >
-              <a href={recordingUrl}>
-                <Download className="h-4 w-4" />
-              </a>
-            </Button>
+        {recordingUrl && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={restart}
+                className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={togglePlayPause}
+                className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
+              >
+                {!isReady ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isPlaying ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-blue-500/10 hover:text-blue-500"
+              >
+                <a href={recordingUrl}>
+                  <Download className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+            <div className="text-sm font-medium text-muted-foreground">
+              {formatTime(currentTime)} / {formatTime(duration || 0)}
+            </div>
           </div>
-          <div className="text-sm font-medium text-muted-foreground">
-            {formatTime(currentTime)} / {formatTime(duration || 0)}
-          </div>
-        </div>
+        )}
 
-        <div className="rounded-lg p-4 dark:bg-slate-900">
-          <div ref={waveformRef} className="w-full" />
-        </div>
+        {recordingUrl ? (
+          <div className="rounded-lg p-4">
+            <div ref={waveformRef} className="w-full" />
+          </div>
+        ) : (
+          <div className="mt-4 rounded-lg p-4 text-center text-sm text-muted-foreground">
+            No recording available
+          </div>
+        )}
       </div>
     </div>
   );

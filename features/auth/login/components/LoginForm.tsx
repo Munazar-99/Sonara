@@ -71,7 +71,9 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <RequiredFormLabel>Email</RequiredFormLabel>
+                <RequiredFormLabel className="text-dark">
+                  Email
+                </RequiredFormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -92,7 +94,9 @@ export function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <RequiredFormLabel>Password</RequiredFormLabel>
+                  <RequiredFormLabel className="text-dark">
+                    Password
+                  </RequiredFormLabel>
                   <Link
                     prefetch={true}
                     href="/forgot-password"

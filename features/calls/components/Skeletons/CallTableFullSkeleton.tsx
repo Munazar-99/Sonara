@@ -40,10 +40,10 @@ export default function CallTableFullSkeleton() {
         </div>
       </div>
       <div className="mt-8">
-        <Card className="overflow-hidden bg-white dark:bg-zinc-800/50">
+        <Card className="overflow-hidden bg-white dark:bg-gray-dark">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-gray-50 dark:bg-zinc-800">
+              <TableHeader className="min-w-full bg-gray-50 dark:bg-gray-dark/50">
                 <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-gray-700">
                   {[
                     'Caller ID',
@@ -54,9 +54,9 @@ export default function CallTableFullSkeleton() {
                   ].map(header => (
                     <TableHead
                       key={header}
-                      className="px-4 py-3 text-left text-sm font-medium text-muted-foreground"
+                      className="min-w-1/5 w-1/5 px-4 py-3 text-left text-sm font-medium text-muted-foreground"
                     >
-                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-16" />
                     </TableHead>
                   ))}
                 </TableRow>
@@ -65,7 +65,7 @@ export default function CallTableFullSkeleton() {
                 {Array.from({ length: 10 }).map((_, index) => (
                   <TableRow
                     key={index}
-                    className="cursor-pointer transition-colors dark:hover:bg-zinc-700/50"
+                    className="min-w-1/5 w-1/5 cursor-pointer border transition-colors dark:hover:bg-zinc-700/50"
                   >
                     <TableCell className="px-4 py-4">
                       <div className="flex items-center justify-start space-x-2">

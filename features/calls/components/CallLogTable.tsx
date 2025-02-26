@@ -63,7 +63,7 @@ export default function CallLogTable({
               placeholder="Search calls..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9"
+              className="w-full rounded-sm border border-stroke bg-[#f8f8f8] pl-9 dark:border-none dark:bg-[#2C303B]/80 dark:text-white dark:focus:shadow-none"
             />
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function CallLogTable({
         />
       </div>
 
-      <Card className="overflow-hidden bg-white dark:bg-zinc-800/50">
+      <Card className="overflow-hidden bg-white dark:bg-gray-dark">
         <div className="overflow-x-auto">
           <Table>
             <CallTableHeader />
@@ -118,8 +118,8 @@ export default function CallLogTable({
               className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-lg"
             >
               <SheetHeader className="flex-shrink-0 p-6 pb-0">
-                <SheetTitle>Call Details</SheetTitle>
-                <SheetDescription>
+                <SheetTitle className="">Call Details</SheetTitle>
+                <SheetDescription className="!mb-2 !mt-0">
                   View detailed information about the selected call.
                 </SheetDescription>
               </SheetHeader>

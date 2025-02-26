@@ -21,7 +21,7 @@ import { formatDuration } from '../utils';
 const CallEntry: React.FC<{ call: RecentCall }> = ({ call }) => (
   <div
     key={call.id}
-    className="flex flex-wrap items-center justify-center rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100 dark:bg-zinc-700/50 dark:hover:bg-zinc-700/80 xxs:justify-between sm:p-4"
+    className="flex flex-wrap items-center justify-center rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100 dark:bg-sidebar-dark/50 dark:hover:bg-sidebar-dark/80 xxs:justify-between sm:p-4"
   >
     <div className="flex items-center gap-3">
       <div className="rounded-full bg-green-500 p-2">
@@ -54,7 +54,7 @@ const CallDetailSheet: React.FC<{
       <Button
         variant="outline"
         size="sm"
-        className="w-full rounded-md bg-white dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white sm:w-auto"
+        className="w-full rounded-md bg-white dark:bg-dark dark:text-gray-300 dark:hover:bg-primary dark:hover:text-white sm:w-auto"
       >
         <Icon className="mr-2 h-4 w-4" />
         {title}
@@ -81,7 +81,7 @@ const RecentActivity: React.FC<{ data: RecentCall[] }> = ({ data }) => {
   const hasRecentCalls = useMemo(() => data.length > 0, [data]);
 
   return (
-    <Card className="h-full bg-white dark:bg-zinc-800">
+    <Card className="h-full bg-white dark:bg-gray-dark">
       <CardHeader className="border-b">
         <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
       </CardHeader>

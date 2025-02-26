@@ -60,6 +60,7 @@ export default {
         white: '#FFFFFF',
         black: '#121723',
         dark: '#1D2430',
+        darker: '#001524',
         yellow: '#FBB040',
         'body-color': '#788293',
         'body-color-dark': '#959CB1',
@@ -67,7 +68,7 @@ export default {
         'gray-light': '#F0F2F9',
         stroke: '#E3E8EF',
         'stroke-dark': '#353943',
-        'bg-color-dark': '#171C28',
+        'sidebar-dark': '#171C28',
       },
       borderRadius: {
         lg: 'var(--radius)',

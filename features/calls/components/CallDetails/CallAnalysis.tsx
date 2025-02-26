@@ -19,7 +19,7 @@ const CallAnalysis: React.FC<CallAnalysisProps> = ({ call }) => {
   return (
     <ScrollArea className="h-full">
       <div className="space-y-8 p-6">
-        <section>
+        <section className="">
           <h2 className="text-2xl font-semibold">Call Information</h2>
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between">
@@ -46,32 +46,32 @@ const CallAnalysis: React.FC<CallAnalysisProps> = ({ call }) => {
 
         <section>
           <h2 className="text-2xl font-semibold">Call Analysis</h2>
-          <div className="mt-6 space-y-4">
+          <div className="mt-6 w-full space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Call sentiment</span>
-              <div className="flex items-center space-x-2">
+              <span className="w-48 text-muted-foreground">Call sentiment</span>
+              <div className="flex w-[28%] items-center space-x-2">
                 {call.sentiment === 'Positive' ? (
                   <SmilePlus className="h-5 w-5 text-green-500" />
                 ) : call.sentiment === 'Neutral' ? (
-                  <Meh className="h-5 w-5 text-yellow-500" />
+                  <Meh className="h-5 w-5 text-yellow" />
                 ) : (
                   <Frown className="h-5 w-5 text-red-500" />
                 )}
-                <span className="t capitalize">{call.sentiment}</span>
+                <span className="capitalize">{call.sentiment}</span>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Call status</span>
-              <div className="flex items-center justify-start gap-2">
+              <div className="flex w-[28%] items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-500" />
                 <span>Call Completed</span>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="w-[80%] text-muted-foreground">
+              <span className="w-48 text-muted-foreground">
                 End call reason
               </span>
-              <div className="flex items-center justify-start gap-2">
+              <div className="flex w-[28%] items-center gap-2">
                 <div
                   className={`h-2 w-2 rounded-full ${getDisconnectionStatus(call.disconnectionReason!)}`}
                 />
@@ -83,15 +83,18 @@ const CallAnalysis: React.FC<CallAnalysisProps> = ({ call }) => {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 <span className="text-muted-foreground">Task status</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      <HelpCircle className="ml-1 h-4 w-4 text-muted-foreground" />
                     </TooltipTrigger>
-                    <TooltipContent align="start">
-                      <p className="text-sm">
+                    <TooltipContent
+                      align="center"
+                      className="bg-foreground dark:bg-gray-dark"
+                    >
+                      <p className="bg-foreground text-sm dark:bg-gray-dark">
                         Indicates whether the task discussed in the conversation
                         was completed and resolved.
                       </p>
@@ -99,12 +102,14 @@ const CallAnalysis: React.FC<CallAnalysisProps> = ({ call }) => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <Badge
-                variant="default"
-                className={` ${call.outcome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'} `}
-              >
-                {call.outcome ? 'Complete' : 'Incomplete'}
-              </Badge>
+              <div className="flex w-[28%] items-center">
+                <Badge
+                  variant="default"
+                  className={` ${call.outcome ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'} `}
+                >
+                  {call.outcome ? 'Complete' : 'Incomplete'}
+                </Badge>
+              </div>
             </div>
           </div>
         </section>

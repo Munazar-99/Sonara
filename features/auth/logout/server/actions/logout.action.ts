@@ -3,19 +3,25 @@
 import { invalidateSession } from '@/server/db/auth/invalidateSession';
 import { validateRequest } from '@/server/db/auth/validateRequest';
 import { deleteSessionTokenCookie } from '@/utils/auth/deleteSessionTokenCookie';
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
 
 export async function logOut(): Promise<{ error?: string; success?: boolean }> {
+  let session;
+
   try {
-    const { session } = await validateRequest();
+    const result = await validateRequest();
+    session = result.session;
+  } catch (error) {
+    console.error('Validation error:', error);
+    return { error: 'Failed to validate session. Please try again.' };
+  }
 
-    // If no session exists, redirect immediately
-    if (!session) {
-      return redirect('/login');
-    }
+  // Redirect immediately if no session exists
+  if (!session) {
+    redirect('/login');
+  }
 
-    // Invalidate session and clear session token cookie
+  try {
     await Promise.all([
       invalidateSession(session.id),
       deleteSessionTokenCookie(),
@@ -23,11 +29,9 @@ export async function logOut(): Promise<{ error?: string; success?: boolean }> {
 
     return { success: true };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
     console.error('Logout error:', error);
-    return { error: 'An error occurred during the sign-out process. Please try again.' };
+    return {
+      error: 'An error occurred during the sign-out process. Please try again.',
+    };
   }
 }

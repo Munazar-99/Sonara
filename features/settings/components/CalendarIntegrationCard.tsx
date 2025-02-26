@@ -24,7 +24,7 @@ export default function CalendarIntegrationCard({
   onDisconnect,
 }: CalendarIntegrationCardProps) {
   return (
-    <Card className="hover-card">
+    <Card className="hover-card dark:bg-gray-dark">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
@@ -72,8 +72,8 @@ export default function CalendarIntegrationCard({
               }
               className={
                 calendar.connected
-                  ? 'text-destructive hover:bg-destructive/90 hover:text-destructive-foreground'
-                  : ''
+                  ? 'w-[100px] !text-red-500 dark:bg-dark dark:hover:bg-primary dark:hover:text-white'
+                  : 'w-[100px] dark:bg-dark dark:hover:bg-primary dark:hover:text-white'
               }
             >
               {calendar.connected ? 'Disconnect' : 'Connect'}

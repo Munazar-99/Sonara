@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Spotlight } from './Spotlight';
 import { SplineScene } from './Splite';
 
-export function SplineSceneBasic() {
+export default function SplineSceneBasic() {
   return (
     <Card className="relative h-full w-full overflow-hidden rounded-none border-none bg-[#000000]">
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" />

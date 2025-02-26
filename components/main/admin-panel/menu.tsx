@@ -110,7 +110,7 @@ export function Menu({ isOpen }: MenuProps) {
                             </Button>
                           </TooltipTrigger>
                           {isOpen === false && (
-                            <TooltipContent side="right">
+                            <TooltipContent className="" side="right">
                               {label}
                             </TooltipContent>
                           )}
@@ -142,7 +142,7 @@ export function Menu({ isOpen }: MenuProps) {
                   <Button
                     onClick={handleLogOut}
                     variant="outline"
-                    className="mt-5 h-10 w-full justify-center"
+                    className="mt-5 h-10 w-full justify-center dark:bg-dark dark:hover:bg-primary dark:hover:text-white"
                     disabled={loading}
                   >
                     {loading ? (

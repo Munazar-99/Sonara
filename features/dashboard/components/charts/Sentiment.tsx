@@ -19,11 +19,11 @@ interface SentimentChartProps {
   }[];
 }
 
-export  default function SentimentChart({ title, data }: SentimentChartProps) {
+export default function SentimentChart({ title, data }: SentimentChartProps) {
   const hasData = data.some(item => item.value > 0);
 
   return (
-    <Card className="h-full bg-white dark:bg-zinc-800">
+    <Card className="h-full bg-white dark:bg-gray-dark">
       <CardHeader className="border-b">
         <CardTitle className="text-lg font-semibold">{title}</CardTitle>
       </CardHeader>

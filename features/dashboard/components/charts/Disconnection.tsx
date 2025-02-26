@@ -1,32 +1,40 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
-import { PhoneOff } from "lucide-react"
-import { EmptyState } from "../EmptyState"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { PhoneOff } from 'lucide-react';
+import { EmptyState } from '../EmptyState';
 
 interface ChartCardProps {
-  title: string
+  title: string;
   data: {
-    name: string
-    value: number
-    color: string
-  }[]
+    name: string;
+    value: number;
+    color: string;
+  }[];
 }
 
 export default function Disconnection({ title, data }: ChartCardProps) {
-  const hasData = data.some((item) => item.value > 0)
+  const hasData = data.some(item => item.value > 0);
 
   return (
-    <Card className="bg-white dark:bg-zinc-800 h-full">
-      <CardHeader className="border-b ">
+    <Card className="h-full bg-white dark:bg-gray-dark">
+      <CardHeader className="border-b">
         <CardTitle className="text-lg font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="pt-0 h-[470px] flex flex-col justify-center">
+      <CardContent className="flex h-[470px] flex-col justify-center pt-0">
         {hasData ? (
           <>
-            <div className="w-full h-[400px]">
+            <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                  <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
                     {data.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
@@ -34,7 +42,7 @@ export default function Disconnection({ title, data }: ChartCardProps) {
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
-                        const data = payload[0].payload
+                        const data = payload[0].payload;
                         return (
                           <div
                             className={`rounded border border-gray-100 bg-white p-2 text-sm shadow-md dark:border-gray-700 dark:bg-gray-800`}
@@ -42,16 +50,16 @@ export default function Disconnection({ title, data }: ChartCardProps) {
                             <p className="font-semibold">{data.name}</p>
                             <p>{data.value}</p>
                           </div>
-                        )
+                        );
                       }
-                      return null
+                      return null;
                     }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             <div className="mt-4 space-y-2">
-              {data.map((entry) => (
+              {data.map(entry => (
                 <div
                   key={entry.name}
                   className="flex items-center justify-between rounded-md p-1 transition-colors hover:bg-black/5"
@@ -79,6 +87,5 @@ export default function Disconnection({ title, data }: ChartCardProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
-

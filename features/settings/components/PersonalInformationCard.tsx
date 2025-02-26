@@ -18,7 +18,7 @@ export default function PersonalInformationCard({
   email,
 }: PersonalInformationCardProps) {
   return (
-    <Card className="hover-card">
+    <Card className="hover-card dark:bg-gray-dark">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Settings2 className="h-5 w-5 text-primary" />

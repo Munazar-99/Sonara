@@ -28,7 +28,7 @@ const CallTablePagination = ({
   isDisabledNext,
   currentPage,
 }: CallTablePaginationProps) => (
-  <Card className="bg-white p-4 shadow-md dark:bg-zinc-800/50">
+  <Card className="bg-white p-4 shadow-md dark:bg-gray-dark">
     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
       <div className="flex items-center space-x-2">
         <span className="text-sm text-muted-foreground">Rows per page:</span>

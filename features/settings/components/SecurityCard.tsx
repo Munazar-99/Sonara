@@ -34,7 +34,7 @@ export default function SecurityCard({
   isLoading,
 }: SecurityCardProps) {
   return (
-    <Card className="hover-card">
+    <Card className="hover-card dark:bg-gray-dark">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
@@ -56,17 +56,19 @@ export default function SecurityCard({
               name="oldPassword"
               render={({ field }) => (
                 <FormItem>
-                  <RequiredFormLabel>Current Password</RequiredFormLabel>
+                  <RequiredFormLabel className="text-dark dark:text-white">
+                    Current Password
+                  </RequiredFormLabel>
                   <FormControl>
                     <div className="relative">
                       <PasswordInput
                         {...field}
-                        className="pr-10 transition-shadow duration-300 hover:shadow-sm focus:shadow-md"
+                        className="rounded-sm border border-stroke bg-[#f8f8f8] pr-10 dark:border-none dark:bg-[#2C303B]/80 dark:text-white dark:focus:shadow-none"
                         required
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="!text-red-500" />
                 </FormItem>
               )}
             />
@@ -75,17 +77,19 @@ export default function SecurityCard({
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <RequiredFormLabel>New Password</RequiredFormLabel>
+                  <RequiredFormLabel className="!text-dark dark:!text-white">
+                    New Password
+                  </RequiredFormLabel>
                   <FormControl>
                     <div className="relative">
                       <PasswordInput
                         {...field}
-                        className="pr-10 transition-shadow duration-300 hover:shadow-sm focus:shadow-md"
+                        className="rounded-sm border border-stroke bg-[#f8f8f8] pr-10 dark:border-none dark:bg-[#2C303B]/80 dark:text-white dark:focus:shadow-none"
                         required
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="!text-red-500" />
                 </FormItem>
               )}
             />
@@ -94,17 +98,19 @@ export default function SecurityCard({
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <RequiredFormLabel>Confirm New Password</RequiredFormLabel>
+                  <RequiredFormLabel className="!text-dark dark:!text-white">
+                    Confirm New Password
+                  </RequiredFormLabel>
                   <FormControl>
                     <div className="relative">
                       <PasswordInput
                         {...field}
-                        className="pr-10 transition-shadow duration-300 hover:shadow-sm focus:shadow-md"
+                        className="rounded-sm border border-stroke bg-[#f8f8f8] pr-10 dark:border-none dark:bg-[#2C303B]/80 dark:text-white dark:focus:shadow-none"
                         required
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="!text-red-500" />
                 </FormItem>
               )}
             />

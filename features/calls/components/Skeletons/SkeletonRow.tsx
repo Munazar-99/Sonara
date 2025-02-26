@@ -16,7 +16,7 @@ const SkeletonRow: React.FC<SkeletonRowProps> = ({ rows }) => {
         >
           <TableCell className="px-4 py-4">
             <div className="flex items-center justify-start space-x-2">
-              <Skeleton className="h-6 w-6" />
+              <Skeleton className="h-6 w-6 dark:bg-gray-dark" />
               <Skeleton className="h-4 w-[145px]" />
             </div>
           </TableCell>

@@ -1,9 +1,12 @@
-import { FormLabel } from "@/components/ui/form";
-import React from "react";
+import { FormLabel } from '@/components/ui/form';
+import React from 'react';
 
-const RequiredFormLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <FormLabel className='text-dark'>
-    {children} <span className='text-red-500'>*</span>
+const RequiredFormLabel: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className }) => (
+  <FormLabel className={` ${className}`}>
+    {children} <span className="text-red-500">*</span>
   </FormLabel>
 );
 

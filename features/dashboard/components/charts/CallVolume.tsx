@@ -24,7 +24,7 @@ export default function CallVolumeChart({
   const hasData = chartData.some(data => data.inbound > 0);
 
   return (
-    <Card className="h-full bg-white dark:bg-zinc-800">
+    <Card className="h-full bg-white dark:bg-gray-dark">
       <CardHeader className="border-b">
         <CardTitle className="text-lg font-semibold">Call Volume</CardTitle>
       </CardHeader>

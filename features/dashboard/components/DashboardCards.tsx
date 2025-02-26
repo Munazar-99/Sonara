@@ -15,7 +15,7 @@ export const DashboardCards = memo(({ metrics }: DashboardCardsProps) => {
         {statData.map(({ title, value, icon: Icon, iconColor }) => (
           <div
             key={title}
-            className="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg dark:bg-zinc-800"
+            className="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg dark:bg-gray-dark"
           >
             <div className="mb-2 flex items-start justify-between">
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">

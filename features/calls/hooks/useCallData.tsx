@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCallsAction } from '../server/fetch-calls.action';
 import { dateRanges } from '../utils';
 import { Call } from '../types';
+import { fetchCallsAction } from '../server/actions/fetch-calls.action';
 
 export const useCallData = (initialCalls: Call[]) => {
   const [paginationKeys, setPaginationKeys] = useState<string[]>([]);
