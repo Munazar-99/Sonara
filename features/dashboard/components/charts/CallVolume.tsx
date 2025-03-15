@@ -6,7 +6,6 @@ import {
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Legend,
@@ -36,11 +35,6 @@ export default function CallVolumeChart({
                 data={chartData}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
               >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke={theme === 'dark' ? '#374151' : '#e5e7eb'}
-                />
                 <XAxis
                   dataKey="name"
                   stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}

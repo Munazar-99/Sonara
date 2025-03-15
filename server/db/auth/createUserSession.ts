@@ -1,5 +1,5 @@
 import { Session } from '.prisma/client';
-import prisma from '@/lib/prisma/prisma';
+import { redis } from '@/lib/upstash/upstash';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
 
@@ -11,10 +11,20 @@ export async function createUserSession(
   const session: Session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   };
-  await prisma.session.create({
-    data: session,
-  });
+  await redis.set(
+    `session:${session.id}`,
+    JSON.stringify({
+      id: session.id,
+      user_id: session.userId,
+      expires_at: Math.floor(session.expiresAt.getTime() / 1000),
+    }),
+    {
+      exat: Math.floor(session.expiresAt.getTime() / 1000),
+    },
+  );
+  await redis.sadd(`user_sessions:${userId}`, sessionId);
+
   return session;
 }

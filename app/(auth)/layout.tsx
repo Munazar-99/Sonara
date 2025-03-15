@@ -1,8 +1,8 @@
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 
-const SplineSceneBasic = dynamic(
-  () => import('@/features/auth/login/components/SplineSceneBasic'),
-);
+// const SplineSceneBasic = dynamic(
+//   () => import('@/features/auth/login/components/SplineSceneBasic'),
+// );
 
 export default function AuthLayout({
   children,
@@ -12,9 +12,7 @@ export default function AuthLayout({
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       {children}
-      <div className="hidden lg:block">
-        <SplineSceneBasic />
-      </div>
+      <div className="hidden lg:block">{/* <SplineSceneBasic /> */}</div>
     </div>
   );
 }

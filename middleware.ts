@@ -1,49 +1,61 @@
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+import { validateSessionToken } from '@/server/db/auth/validateSessionToken';
 
 export const config = { matcher: ['/calls', '/dashboard', '/settings'] };
 
+/**
+ * Middleware function to handle authentication and security checks.
+ */
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (request.method === 'GET') {
-    const response = NextResponse.next();
-    const token = request.cookies.get('auth_session')?.value ?? null;
-    if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url));
-    } else if (token !== null) {
-      // Only extend cookie expiration on GET requests since we can be sure
-      // a new session wasn't set when handling the request.
-      response.cookies.set('auth_session', token, {
-        path: '/',
-        maxAge: 60 * 60,
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-    }
-    return response;
+    return await handleAuth(request);
   }
 
+  return validateRequestOrigin(request);
+}
+
+/**
+ * Handles authentication for protected routes.
+ */
+async function handleAuth(request: NextRequest): Promise<NextResponse> {
+  const token = request.cookies.get('auth_session')?.value;
+
+  if (!token || !(await validateSessionToken(token))) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  const response = NextResponse.next();
+  response.cookies.set('auth_session', token, {
+    path: '/',
+    maxAge: 60 * 60, // 1 hour
+    sameSite: 'lax',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  });
+
+  return response;
+}
+
+/**
+ * Validates request origin to prevent CSRF attacks.
+ */
+function validateRequestOrigin(request: NextRequest): NextResponse {
   const originHeader = request.headers.get('Origin');
-  // NOTE: You may need to use `X-Forwarded-Host` instead
   const hostHeader = request.headers.get('Host');
-  if (originHeader === null || hostHeader === null) {
-    return new NextResponse(null, {
-      status: 403,
-    });
+
+  if (!originHeader || !hostHeader) {
+    return new NextResponse(null, { status: 403 });
   }
-  let origin: URL;
+
   try {
-    origin = new URL(originHeader);
+    const origin = new URL(originHeader);
+    if (origin.host !== hostHeader) {
+      return new NextResponse(null, { status: 403 });
+    }
   } catch {
-    return new NextResponse(null, {
-      status: 403,
-    });
+    return new NextResponse(null, { status: 403 });
   }
-  if (origin.host !== hostHeader) {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
+
   return NextResponse.next();
 }

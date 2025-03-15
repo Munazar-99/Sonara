@@ -140,7 +140,7 @@ export default function AIAgentSettingsCard({
                 Change Voice
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[95vw] max-w-[550px] bg-gray-dark p-0">
+            <DialogContent className="w-[95vw] max-w-[550px] p-0 dark:bg-gray-dark">
               <DialogHeader className="border-b px-6 py-4">
                 <DialogTitle className="text-xl">Select a Voice</DialogTitle>
               </DialogHeader>

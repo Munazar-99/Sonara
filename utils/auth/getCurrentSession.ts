@@ -11,7 +11,7 @@ export const getCurrentSession = async (): Promise<
     return null;
   }
   try {
-    const { session } = await validateSessionToken(token);
+    const session = await validateSessionToken(token);
     return session;
   } catch (error) {
     console.error('Error validating session token:', error);

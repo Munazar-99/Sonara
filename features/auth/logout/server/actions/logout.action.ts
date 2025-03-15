@@ -6,32 +6,21 @@ import { deleteSessionTokenCookie } from '@/utils/auth/deleteSessionTokenCookie'
 import { redirect } from 'next/navigation';
 
 export async function logOut(): Promise<{ error?: string; success?: boolean }> {
-  let session;
-
   try {
-    const result = await validateRequest();
-    session = result.session;
-  } catch (error) {
-    console.error('Validation error:', error);
-    return { error: 'Failed to validate session. Please try again.' };
-  }
+    const session = await validateRequest();
+    if (!session || !('userId' in session)) {
+      console.warn('Invalid or missing session. Redirecting to login.');
+      redirect('/login');
+    }
 
-  // Redirect immediately if no session exists
-  if (!session) {
-    redirect('/login');
-  }
-
-  try {
     await Promise.all([
-      invalidateSession(session.id),
+      invalidateSession(session.id, session.userId),
       deleteSessionTokenCookie(),
     ]);
 
     return { success: true };
   } catch (error) {
     console.error('Logout error:', error);
-    return {
-      error: 'An error occurred during the sign-out process. Please try again.',
-    };
+    return { error: 'An error occurred during logout. Please try again.' };
   }
 }

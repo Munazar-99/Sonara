@@ -2,25 +2,27 @@
 
 import { retellClient } from '@/lib/retell/retell';
 import { getCurrentUser } from '@/utils/auth/getCurrentUser';
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
 import { VoiceResponse } from 'retell-sdk/resources/voice.mjs';
 
+/**
+ * Fetches the authenticated user or redirects to login if not found.
+ */
 async function fetchUser(): Promise<{ email: string; name: string }> {
-  try {
-    const user = await getCurrentUser();
-    if (!user) return redirect('/login');
-
-    return {
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`,
-    };
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    return { email: 'unknown@example.com', name: 'Unknown User' };
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect('/login');
   }
+
+  return {
+    email: user.email,
+    name: `${user.firstName} ${user.lastName}`,
+  };
 }
 
+/**
+ * Fetches voices from the Retell API, filtering only ElevenLabs voices.
+ */
 async function fetchVoices(): Promise<VoiceResponse[]> {
   try {
     const voiceResponses = await retellClient.voice.list();
@@ -31,22 +33,17 @@ async function fetchVoices(): Promise<VoiceResponse[]> {
   }
 }
 
+/**
+ * Handles fetching settings-related data.
+ */
 export async function settingsAction() {
   try {
-    const user = await fetchUser();
-    const voices = await fetchVoices();
-
+    const [user, voices] = await Promise.all([fetchUser(), fetchVoices()]);
     return { user, voices };
   } catch (error) {
-    if (isRedirectError(error)) {
-      console.warn('Redirect error occurred: ', error);
-      throw error;
-    }
-
     console.error('Error in settingsAction:', error);
-
     return {
-      user: { email: 'error@example.com', name: 'Error User' }, // Ensure correct type
+      user: { email: 'error@example.com', name: 'Error User' },
       voices: [],
     };
   }
