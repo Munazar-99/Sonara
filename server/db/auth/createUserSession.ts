@@ -2,6 +2,7 @@ import { Session } from '.prisma/client';
 import { redis } from '@/lib/upstash/upstash';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
+import { updateLastActive } from './updateLastActive';
 
 export async function createUserSession(
   token: string,
@@ -11,7 +12,7 @@ export async function createUserSession(
   const session: Session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 1),
   };
   await redis.set(
     `session:${session.id}`,
@@ -25,6 +26,7 @@ export async function createUserSession(
     },
   );
   await redis.sadd(`user_sessions:${userId}`, sessionId);
+  await updateLastActive(userId);
 
   return session;
 }

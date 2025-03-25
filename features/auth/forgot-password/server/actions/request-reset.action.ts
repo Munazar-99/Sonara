@@ -18,7 +18,7 @@ const rateLimit = new Ratelimit({
 });
 
 export async function requestResetAction(
-  formData: EmailFormValues
+  formData: EmailFormValues,
 ): Promise<{ error?: string; success?: boolean }> {
   try {
     const ip = (await headers()).get('x-forwarded-for') ?? 'unknown-ip';
@@ -47,13 +47,17 @@ export async function requestResetAction(
 
     // Generate and store a new password reset token
     const token = generateSessionToken();
-    await createPasswordResetSession(token, existingUser.id, existingUser.email);
+    await createPasswordResetSession(
+      token,
+      existingUser.id,
+      existingUser.email,
+    );
 
     // Send the password reset email
     const sendReset = await sendResetLinkEmail(
       existingUser.email,
       token,
-      existingUser.firstName
+      existingUser.name!,
     );
     if (!sendReset.success) {
       return { error: 'Failed to send reset email. Please try again later.' };

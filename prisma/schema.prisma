@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["FullTextSearchPostgres"]
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -16,25 +10,39 @@ datasource db {
 }
 
 model User {
-  id                   String   @id
-  email                String   @unique
-  firstName            String
-  lastName             String
-  passwordHash         String?
-  sessions             Session[]
-  passwordResetSessions PasswordResetSession[]
-  createdAt            DateTime @default(now())
+  id           String   @id @default(cuid())
+  name         String   
+  email        String   @unique @db.Text
+  passwordHash String?  // Nullable until user sets password
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  lastActive   DateTime?
+
+  apiKey       String?   
+  billingRate  Float     @default(0.5) 
+  currentSpend Float     @default(0.0)
+
+  minutesUsed  Int       @default(0) 
+  callsMade    Int       @default(0) 
+
+  role   UserRole   @default(standard)
+  status UserStatus @default(pending)
+
+  PasswordResetSessions PasswordResetSession[]
+  Sessions              Session[]
+  Jobs                  Job[] 
 
   @@map("users")
 }
+
+
 
 
 model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
-
-  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -50,6 +58,9 @@ model Job {
   status          String
   progress        Int
   instructions    String[]
+
+  userId String?  // Optional, if jobs are tied to users
+  user   User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model PasswordResetSession {
@@ -57,9 +68,18 @@ model PasswordResetSession {
   userId    String
   email     String
   expiresAt DateTime
-  
-  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_session")
 }
 
+enum UserRole {
+  admin
+  standard
+}
+
+enum UserStatus {
+  active
+  pending
+  suspended
+}

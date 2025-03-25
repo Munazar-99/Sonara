@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { useStore } from '@/hooks/use-store';
 import { cn } from '@/utils/utils';
-import { PanelsTopLeft } from 'lucide-react';
 import Link from 'next/link';
 import { SidebarToggle } from './sidebar-toggle';
 import { Menu } from './menu';
+import Image from 'next/image';
 
 export function Sidebar() {
   const sidebar = useStore(useSidebar, x => x);
@@ -34,8 +34,15 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <PanelsTopLeft className="mr-1 h-6 w-6" />
+          <Link href="/dashboard" className="flex items-center gap-0">
+            <Image
+              className="size-4"
+              src="/sonara.png"
+              alt="Next.js logo"
+              width={180}
+              height={38}
+              priority
+            />
             <h1
               className={cn(
                 'whitespace-nowrap text-lg font-bold transition-[transform,opacity,display] duration-300 ease-in-out',
@@ -44,7 +51,7 @@ export function Sidebar() {
                   : 'translate-x-0 opacity-100',
               )}
             >
-              Brand
+              Sonara
             </h1>
           </Link>
         </Button>

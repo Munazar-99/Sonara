@@ -16,7 +16,7 @@ async function fetchUser(): Promise<{ email: string; name: string }> {
 
   return {
     email: user.email,
-    name: `${user.firstName} ${user.lastName}`,
+    name: user.name,
   };
 }
 
