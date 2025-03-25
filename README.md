@@ -1,49 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with
-[`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# <img src="https://lexai-mauve.vercel.app/_next/image?url=%2Fsonara.png&w=384&q=75" alt="Sonara Logo" width="20" height="20"> Sonara
+ 
+**Never Miss a Call. Never Lose a Customer.**
 
-## Getting Started
+## 🚀 Overview
+Sonara is an AI-powered voice agent designed to handle customer calls seamlessly. It ensures that no call goes unanswered, improving customer experience and business efficiency.
 
-First, run the development server:
+## 🌟 Features
+- **AI-Powered Call Handling** – Respond to customer inquiries 24/7 with human-like conversations.
+- **Real-time Transcriptions** – Convert calls into text for easy review.
+- **Sentiment Analysis** – Analyze customer emotions for better insights.
+- **Call Summaries & Recordings** – Get concise summaries and recordings for every call.
+- **Analytics Dashboard** – Monitor performance and track key call metrics.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠 Tech Stack
+- **Backend:** Node.js, Prisma, Serverless PostgreSQL
+- **Frontend:** React, TailwindCSS
+- **AI Engine:** OpenAI GPT-4o
+- **Deployment:** Vercel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the
-result.
 
-You can start editing the page by modifying `app/page.tsx`. The page
-auto-updates as you edit the file.
+## 📌 Roadmap
+- [ ] Beta Release
+- [ ] Twilio Integration
+- [ ] Multi-language Support
 
-This project uses
-[`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
-to automatically optimize and load [Geist](https://vercel.com/font), a new font
-family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out
-[the Next.js GitHub repository](https://github.com/vercel/next.js) - your
-feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
-
-Check out our
-[Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)
-for more details.
+## 📞 Contact
+For inquiries, reach out to [My Email](mailto:munazaraliabdulle@gmail.com).
